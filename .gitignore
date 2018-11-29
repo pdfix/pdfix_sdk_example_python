@@ -1,0 +1,6 @@
+*.dylib
+*.dll
+*.so
+.vscode
+__pycache__
+output
