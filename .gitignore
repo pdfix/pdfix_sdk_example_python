@@ -1,6 +1,8 @@
-*.dylib
-*.dll
-*.so
 .vscode
 __pycache__
-output
+/output
+/pdfix
+/src/Pdfix.py
+/src/PdfToHtml.py
+/src/OcrTesseract.py
+/src/*.dylib
