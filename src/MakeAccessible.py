@@ -1,7 +1,7 @@
 # MakeAccessible.py
 
-# import initialization to load required shared libraries
-from Initialization import inputPath, outputPath
+# import utils to load required shared libraries
+from Utils import inputPath, outputPath
 from Pdfix import *
 
 pdfix  = GetPdfix()
