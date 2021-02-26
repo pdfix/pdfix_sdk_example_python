@@ -11,5 +11,6 @@ import ExtractImages
 import ExtractTables
 import ExtractText
 import MakeAccessible
+import OpenDocFromStream
 import RenderPage
 import SetFormFieldValue

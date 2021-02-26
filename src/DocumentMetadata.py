@@ -16,7 +16,7 @@ if doc is None:
 title = doc.GetInfo("Title")
 doc.SetInfo("Title", "My next presenttion")
 
-stm = pdfix.CreateFileStream(outputPath + "DocumentMetadata.xml", kPsTruncate)
+stm = pdfix.CreateFileStream(outputPath + "/DocumentMetadata.xml", kPsTruncate)
 if stm is None:
     raise Exception('Unable to open output file : ' + pdfix.GetError()) 
 
