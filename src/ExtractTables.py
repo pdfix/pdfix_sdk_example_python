@@ -86,9 +86,11 @@ for i in range(0, doc.GetNumPages()):
         raise Exception('Acquire Page fail : ' + pdfix.GetErrorType())
     
     # get the page map of the current page
-    pageMap = page.AcquirePageMap(0, None)
+    pageMap = page.AcquirePageMap()    
     if pageMap is None:
-        raise Exception('Acquire PageMap fail : ' + pdfix.GetErrorType())
+        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+    if not pageMap.CreateElements(0, None):
+        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
     
     # get page container
     container = pageMap.GetElement()
