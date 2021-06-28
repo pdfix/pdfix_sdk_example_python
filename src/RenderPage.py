@@ -51,5 +51,6 @@ if not image.SaveToStream(stm, imgParams):
 # cleanup
 stm.Destroy()
 image.Destroy()
+pageView.Release()
 page.Release()
 doc.Close()
