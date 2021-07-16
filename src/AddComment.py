@@ -27,10 +27,11 @@ annotRect.left = (cropBox.right + cropBox.left) / 2.0 - 10
 annotRect.bottom = (cropBox.top + cropBox.bottom) / 2.0 - 10
 annotRect.right = (cropBox.right + cropBox.left) / 2.0 + 10
 annotRect.top = (cropBox.top + cropBox.bottom) / 2.0 + 10
-annot = page.AddNewTextAnnot(-1, annotRect)
+annot = page.CreateAnnot(kAnnotText, annotRect)
+annot.__class__ = PdfTextAnnot
+page.AddAnnot(-1, annot)
 if annot is None:
     raise Exception(pdfix.GetError())
-
 annot.SetAuthor("Peter Brown")
 annot.SetContents("This is my comment.")
 annot.AddReply("Mark Fish", "This is some reply.")

@@ -15,6 +15,9 @@ import AddWatermark
 print("ConvertToHtml")
 import ConvertToHtml
 
+print("ConvertToHtmlByPages")
+import ConvertToHtmlByPages
+
 print("DocumentMetadata")
 import DocumentMetadata
 
