@@ -15,21 +15,18 @@ if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
 def ImageToBase64(image: PsImage) -> str:
-    return ""
-    # todo
-    # stm = pdfix.CreateMemStream()
-    # if not image.SaveDataToStream(stm):
-    #     raise Exception(pdfix.GetError())
-    # sz = stm.GetSize()
-    # imageData = bytearray(sz)
-    # rawData = (ctypes.c_ubyte * sz).from_buffer(imageData)
-    # stm.Read(0, rawData, len(rawData))
-    # stm.Destroy()
+    stm = pdfix.CreateMemStream()
+    imageParams = PdfImageParams()
+    if not image.SaveToStream(stm, imageParams):
+        raise Exception(pdfix.GetError())
+    sz = stm.GetSize()
+    imageData = bytearray(sz)
+    rawData = (ctypes.c_ubyte * sz).from_buffer(imageData)
+    stm.Read(0, rawData, len(rawData))
+    stm.Destroy()
 
-    # d = bytearray(rawData)
-
-    # imageDataBase64 = base64.b64encode(bytes(d)).hex()
-    # return imageDataBase64
+    imageDataBase64 = base64.b64encode(bytes(rawData)).decode("utf-8")
+    return imageDataBase64
 
 def ExtractElemToBase64(elem: PdeElement, node: dict):
     page = elem.GetPageMap().GetPage()
