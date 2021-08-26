@@ -14,6 +14,16 @@ doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
+doc_template = doc.GetTemplate();
+if doc_template is None:
+    raise Exception(pdfix.GetError())
+
+confstm = pdfix.CreateFileStream(inputPath + "/config.json", kPsReadOnly)
+if (confstm):
+    if doc_template.LoadFromStream(confstm, kDataFormatJson) is False:
+        raise Exception(pdfix.GetError())
+    confstm.Destroy()
+
 def ImageToBase64(image: PsImage) -> str:
     stm = pdfix.CreateMemStream()
     imageParams = PdfImageParams()
