@@ -9,6 +9,9 @@ import AddComment
 print("AddTags")
 import AddTags
 
+print("AddTagAsArtifact")
+import AddTagAsArtifact
+
 print("AddWatermark")
 import AddWatermark
 
