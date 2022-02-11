@@ -3,7 +3,6 @@
 
 import platform, os, math
 from Pdfix import Pdfix_init
-from PdfToHtml import PdfToHtml_init
 from OcrTesseract import OcrTesseract_init
 from Pdfix import *
 
@@ -20,7 +19,6 @@ def getModuleName(module):
 # load pdfix library from the current folder
 basePath = os.path.dirname(os.path.abspath(__file__))
 Pdfix_init(basePath + "/" + getModuleName('pdfix'))
-PdfToHtml_init(basePath + "/" + getModuleName('pdf_to_html'))
 OcrTesseract_init(basePath + "/" + getModuleName('ocr_tesseract'))
 
 inputPath = basePath + "/../resources"

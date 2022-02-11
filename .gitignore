@@ -3,6 +3,5 @@ __pycache__
 /output
 /pdfix
 /src/Pdfix.py
-/src/PdfToHtml.py
 /src/OcrTesseract.py
 /src/*.dylib

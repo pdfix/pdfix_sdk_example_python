@@ -15,7 +15,7 @@ Run setup_python.sh to download and copy all dependencies for examples
 ## Manual Setup
 
 Download PDFix SDK from https://pdfix.net/download
-- import Pdfix.py, PdfToHtml.py, OcrTesseract.py into the project
+- import Pdfix.py, OcrTesseract.py into the project
 - deploy PDFix SDK binaries from the bin/ folder with your project
 
 ## Have a question? Need help?
