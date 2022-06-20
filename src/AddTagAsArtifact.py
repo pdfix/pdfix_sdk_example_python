@@ -61,7 +61,8 @@ if not doc.RemoveTags(0, None):
     raise Exception(pdfix.GetError())
 
 # autotag document first
-if not doc.AddTags(0, None):
+tagsParams = PdfTagsParams()
+if not doc.AddTags(tagsParams, 0, None):
     raise Exception(pdfix.GetError())
 
 # get the struct tree

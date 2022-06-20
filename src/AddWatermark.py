@@ -19,9 +19,7 @@ if img_stm is None:
 
 # identify image format from file path
 format = kImageFormatPng
-
-image_obj = doc.CreateXObjectFromImage(img_stm, format)
-
+image_obj = doc.CreateXObjectFromImage(img_stm, format, 0)
 if image_obj is None:
     raise Exception(pdfix.GetError())
 

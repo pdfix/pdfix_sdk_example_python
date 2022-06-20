@@ -4,6 +4,7 @@
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
 from Pdfix import *
+import ctypes  
 
 pdfix  = GetPdfix()
 if pdfix is None:
@@ -16,15 +17,19 @@ if doc is None:
 title = doc.GetInfo("Title")
 doc.SetInfo("Title", "My next presenttion")
 
+metaStm = doc.GetMetadata()
+if metaStm is None:
+    raise Exception('Unable to read document metadata: ' + pdfix.GetError()) 
+
+sz = metaStm.GetSize()
+data = bytearray(sz)
+rawData = (ctypes.c_ubyte * sz).from_buffer(data)
+metaStm.Read(0, rawData, len(rawData))
+
 stm = pdfix.CreateFileStream(outputPath + "/DocumentMetadata.xml", kPsTruncate)
 if stm is None:
     raise Exception('Unable to open output file : ' + pdfix.GetError()) 
-
-metadata = doc.GetMetadata()
-if metadata is None:
-    raise Exception('Unable to read document metadata: ' + pdfix.GetError()) 
-
-if not metadata.SaveToStream(stm):
-    raise Exception('Unable to save metadata : ' + pdfix.GetError()) 
+stm.Write(0, rawData, len(rawData))
 stm.Destroy()
+
 doc.Close()

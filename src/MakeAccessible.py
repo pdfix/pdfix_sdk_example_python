@@ -12,8 +12,11 @@ doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
+title = "Document title"
+lang = "en-US"
+
 accessibleParams = PdfAccessibleParams()
-if not doc.MakeAccessible(accessibleParams, 0, None):
+if not doc.MakeAccessible(accessibleParams, title, lang, 0, None):
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):

@@ -12,7 +12,8 @@ doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
-if not doc.AddTags(0, None):
+tagsParams = PdfTagsParams()
+if not doc.AddTags(tagsParams, 0, None):
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/AddTags.pdf", kSaveFull):
