@@ -5,3 +5,5 @@ __pycache__
 /src/Pdfix.py
 /src/OcrTesseract.py
 /src/*.dylib
+/src/*.so
+/src/*.dll
