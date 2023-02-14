@@ -5,8 +5,8 @@ pushd "$(dirname $0)"
 
 # download and unpack the pdfix sdk build
 
-SDK_VER=6.19.0
-SDK_BUILD=a3df17a6
+SDK_VER=6.20.0
+SDK_BUILD=85fec3d0
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
   SDK_ZIP="pdfix_sdk_"$SDK_VER"_"$SDK_BUILD"_linux.tar.gz"
