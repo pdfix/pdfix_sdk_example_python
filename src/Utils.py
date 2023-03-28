@@ -18,7 +18,7 @@ def getModuleName(module):
 
 # load pdfix library from the current folder
 basePath = os.path.dirname(os.path.abspath(__file__))
-Pdfix_init(basePath + "/" + getModuleName('pdfix'))
+Pdfix_init(basePath + "/" + getModuleName('pdf'))
 OcrTesseract_init(basePath + "/" + getModuleName('ocr_tesseract'))
 
 inputPath = basePath + "/../resources"
