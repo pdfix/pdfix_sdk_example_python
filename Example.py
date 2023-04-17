@@ -24,6 +24,9 @@ import ConvertToHtmlByPages
 print("DocumentMetadata")
 import DocumentMetadata
 
+print("Edit content")
+import EditContent
+
 print("ExtractImages")
 import ExtractImages
 
