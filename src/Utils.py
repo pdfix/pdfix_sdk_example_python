@@ -2,24 +2,10 @@
 # Pdfix utils
 
 import platform, os, math
-from Pdfix import Pdfix_init
-from OcrTesseract import OcrTesseract_init
-from Pdfix import *
-
-# get the shared library name based on the platform
-def getModuleName(module):
-  pltfm = platform.system()
-  if pltfm == 'Darwin':
-    return 'lib' + module + '.dylib'
-  elif pltfm == "Windows":
-    return module + '.dll'
-  elif pltfm == "Linux":
-    return 'lib' + module + '.so'
+from pdfixsdk.Pdfix import *
 
 # load pdfix library from the current folder
 basePath = os.path.dirname(os.path.abspath(__file__))
-Pdfix_init(basePath + "/" + getModuleName('pdf'))
-OcrTesseract_init(basePath + "/" + getModuleName('ocr_tesseract'))
 
 inputPath = basePath + "/../resources"
 outputPath = basePath + "/../output"

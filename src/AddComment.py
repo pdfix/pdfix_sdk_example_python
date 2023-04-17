@@ -1,11 +1,11 @@
 # AddComment.py
 # Example how to add a comment with reply into PDF.
 
-import os
+from os import *
+from pdfixsdk.Pdfix import *
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
-from Pdfix import *
 
 pdfix  = GetPdfix()
 if pdfix is None:

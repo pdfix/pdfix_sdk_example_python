@@ -1,9 +1,4 @@
 .vscode
 __pycache__
+env/
 /output
-/pdfix
-/src/Pdfix.py
-/src/OcrTesseract.py
-/src/*.dylib
-/src/*.so
-/src/*.dll

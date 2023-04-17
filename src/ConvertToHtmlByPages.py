@@ -4,7 +4,7 @@
 # import utils to load required shared libraries
 import ctypes
 from Utils import inputPath, outputPath
-from Pdfix import *
+from pdfixsdk.Pdfix import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
