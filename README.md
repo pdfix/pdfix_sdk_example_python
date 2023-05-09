@@ -20,7 +20,7 @@ env/Scripts/activate
 
 Install pdfix-sdk module
 ```
-pip install -i https://test.pypi.org/simple/ pdfix-sdk-pdfix-support
+pip install pdfix-sdk
 ```
 
 ## Code 
