@@ -1,6 +1,4 @@
 # PDFix SDK example for python
-PDFix SDK code examples 
-
 For more information please visit [https://pdfix.net](https://pdfix.net).
 
 ## Installation
@@ -18,12 +16,17 @@ Windows
 env/Scripts/activate
 ```
 
-Install pdfix-sdk module
+### Installation using requirements
 ```
-pip install pdfix-sdk
+pip install -r requirements.txt
 ```
 
-## Code 
+### Manual installation
+```
+pip3 install pdfix-sdk
+```
+
+## Code Example
 ```
 from pdfixsdk.Pdfix import *
 

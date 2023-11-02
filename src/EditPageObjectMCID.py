@@ -1,14 +1,12 @@
 import os
 from pdfixsdk.Pdfix import *
-
-
-dir = os.path.dirname(os.path.abspath(__file__))
+from Utils import inputPath, outputPath
 
 
 pdfix = GetPdfix()
 
 # open the document
-doc = pdfix.OpenDoc(dir + "/../resources/tagged.pdf", "")
+doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
 
 # load first page cotnent and the first page object
 page = doc.AcquirePage(0)
@@ -30,5 +28,5 @@ contentMark.SetTagObject(tagMcid, tagDict, False)
 page.Release()
 
 # save and close document
-doc.Save(dir + "/../resources/modified.pdf", kSaveFull)
+doc.Save(outputPath + "/PageObjectMCID.pdf", kSaveFull)
 doc.Close()
