@@ -27,6 +27,9 @@ import DocumentMetadata
 print("Edit content")
 import EditContent
 
+print ("Edit Page Object MCID")
+import EditPageObjectMCID
+
 print("ExtractImages")
 import ExtractImages
 
