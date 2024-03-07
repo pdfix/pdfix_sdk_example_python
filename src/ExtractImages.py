@@ -30,7 +30,7 @@ def SaveImage(pdfix, page, element):
         renderParams.clip_box = bbox
         renderParams.image = image
         renderParams.matrix = pageView.GetDeviceMatrix()
-        page.DrawContent(renderParams, 0, None)
+        page.DrawContent(renderParams)
 
         # save image to file
         path = outputPath + "/ExtractImages_" + str(imageIndex) + ".png"
@@ -60,7 +60,7 @@ for i in range(0, doc.GetNumPages()):
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
         raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
-    if not pageMap.CreateElements(0, None):
+    if not pageMap.CreateElements():
         raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
     
     # get page container

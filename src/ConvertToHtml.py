@@ -22,7 +22,7 @@ htmlParams=PdfHtmlParams()
 htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG
 if not htmlConv.SetParams(htmlParams):
     raise Exception('Unable to set params : ' + pdfix.GetError())    
-if not htmlConv.Save(outputPath + "/index.html", 0, None):
+if not htmlConv.Save(outputPath + "/index.html"):
     raise Exception('Unable to open html doc : ' + pdfix.GetError())    
     
 htmlConv.Destroy()

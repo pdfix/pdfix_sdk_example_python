@@ -15,8 +15,8 @@ if doc is None:
 # preflight document for better tagging structure (optional)
 tmpl = doc.GetTemplate()
 for i in range(0, doc.GetNumPages()):
-    tmpl.AddPage(i, 0, None)
-tmpl.Update(0, None)
+    tmpl.AddPage(i)
+tmpl.Update()
 
 # set the document title and language
 title = "Document title"
@@ -24,7 +24,7 @@ lang = "en-US"
 
 # run make accessibile
 accessibleParams = PdfAccessibleParams()
-if not doc.MakeAccessible(accessibleParams, title, lang, 0, None):
+if not doc.MakeAccessible(accessibleParams, title, lang):
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):

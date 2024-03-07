@@ -57,12 +57,12 @@ if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
 # cleanup any previous structure tree
-if not doc.RemoveTags(0, None):
+if not doc.RemoveTags():
     raise Exception(pdfix.GetError())
 
 # autotag document first
 tagsParams = PdfTagsParams()
-if not doc.AddTags(tagsParams, 0, None):
+if not doc.AddTags(tagsParams):
     raise Exception(pdfix.GetError())
 
 # get the struct tree
