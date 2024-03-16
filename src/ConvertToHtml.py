@@ -17,11 +17,14 @@ htmlConv = doc.CreateHtmlConversion()
 if htmlConv is None:
     raise Exception('Unable to open html doc : ' + pdfix.GetError())   
 
-# convert all pages at once
+# set the conversion parameters
 htmlParams=PdfHtmlParams()
 htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG
+htmlParams.type = kPdfHtmlDerivation # select the conversion type
 if not htmlConv.SetParams(htmlParams):
     raise Exception('Unable to set params : ' + pdfix.GetError())    
+
+# run conversion into the file 
 if not htmlConv.Save(outputPath + "/index.html", 0, None):
     raise Exception('Unable to open html doc : ' + pdfix.GetError())    
     
