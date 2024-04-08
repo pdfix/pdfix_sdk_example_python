@@ -13,7 +13,7 @@ if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
 tagsParams = PdfTagsParams()
-if not doc.AddTags(tagsParams, 0, None):
+if not doc.AddTags(tagsParams):
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/AddTags.pdf", kSaveFull):

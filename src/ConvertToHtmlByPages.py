@@ -50,14 +50,14 @@ docStm.Write(docStm.GetSize(), raw_third, len(raw_third))
 
 # save the main document node and one page
 for i in range(0, doc.GetNumPages()):
-    if  not htmlConv.AddPage(i, 0, None):
+    if  not htmlConv.AddPage(i):
         raise Exception('Unable to create html file : ' + pdfix.GetError())
     break
 
 # do not save the head node, just document and pages
 htmlParams.flags |= kHtmlNoHeadNode;
 
-if not htmlConv.SaveToStream(docStm, 0, None):
+if not htmlConv.SaveToStream(docStm):
     raise Exception('Unable to save html doc : ' + pdfix.GetError())
 
 # write terminal html
