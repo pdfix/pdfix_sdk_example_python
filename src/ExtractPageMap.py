@@ -52,7 +52,7 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
     pageView.Release()
 
     # draw content to image
-    if not page.DrawContent(renderParams, 0, None):
+    if not page.DrawContent(renderParams):
         raise Exception(pdfix.GetError())
     
     node["imageData"] = ImageToBase64(renderParams.image)
@@ -130,7 +130,7 @@ for i in range(0, doc.GetNumPages()):
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
         raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
-    if not pageMap.CreateElements(0, None):
+    if not pageMap.CreateElements():
         raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
 
     # extract the main page container recursively
