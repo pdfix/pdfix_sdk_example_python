@@ -1,0 +1,156 @@
+{
+    "commands": [
+        {
+            "name": "clear_structure",
+            "params": [
+                {
+                    "name": "clear_tags",
+                    "value": true
+                },
+                {
+                    "name": "clear_struct_tree",
+                    "value": true
+                },
+                {
+                    "name": "clear_bookmarks",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "flatten_xobject"
+        },
+        {
+            "name": "embed_font"
+        },
+        {
+            "name": "add_missing_unicode"
+        },
+        {
+            "name": "preflight",
+            "params": [
+                {
+                    "name": "merge_preflight",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "add_tags",
+            "params": [
+                {
+                    "name": "standard_attrs",
+                    "value": false
+                },
+                {
+                    "name": "sequential_headings",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "name": "set_language",
+            "params": [
+                {
+                    "name": "lang",
+                    "value": "en-US"
+                },
+                {
+                    "name": "apply_lang_to",
+                    "value": 0
+                },
+                {
+                    "name": "overwrite",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "set_title",
+            "params": [
+                {
+                    "name": "title_type",
+                    "value": 2
+                },
+                {
+                    "name": "custom_text",
+                    "value": ""
+                },
+                {
+                    "name": "description_tag",
+                    "value": "Caption"
+                },
+                {
+                    "name": "overwrite",
+                    "value": false
+                }
+            ]
+        },
+        {
+            "name": "set_display_doc_title"
+        },
+        {
+            "name": "set_pdf_ua_standard",
+            "params": [
+                {
+                    "name": "part_number",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "name": "set_suspect_value"
+        },
+        {
+            "name": "fix_oc_name"
+        },
+        {
+            "name": "fix_media_clip_keys",
+            "params": [
+                {
+                    "name": "ct_key",
+                    "value": "text/plain"
+                }
+            ]
+        },
+        {
+            "name": "create_bookmarks",
+            "params": [
+                {
+                    "name": "tag_1",
+                    "value": "H1"
+                },
+                {
+                    "name": "tag_2",
+                    "value": "H2"
+                },
+                {
+                    "name": "tag_3",
+                    "value": "H3"
+                },
+                {
+                    "name": "tag_4",
+                    "value": "H4"
+                },
+                {
+                    "name": "tag_5",
+                    "value": "H5"
+                },
+                {
+                    "name": "tag_6",
+                    "value": "H6"
+                },
+                {
+                    "name": "overwrite",
+                    "value": false
+                }
+            ]
+        }
+    ],
+    "desc": "Make the document PDF/UA compliant",
+    "flags": 1,
+    "name": "make_accessible",
+    "title": "Make Accessible",
+    "type": "default",
+    "version": 1
+}
