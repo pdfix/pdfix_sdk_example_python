@@ -1,1 +1,1 @@
-pdfix-sdk==7.2.0
+pdfix-sdk==8.0.0
