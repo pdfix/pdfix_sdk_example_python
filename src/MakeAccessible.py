@@ -4,6 +4,8 @@
 from Utils import inputPath, outputPath
 from pdfixsdk.Pdfix import *
 
+commandPath = ""#inputPath + "/make-accessible.json"
+
 pdfix  = GetPdfix()
 if pdfix is None:
     raise Exception('Pdfix Initialization fail')
@@ -12,17 +14,27 @@ doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
-cmd = doc.GetCommand()
+command = doc.GetCommand()
 
-stm = pdfix.CreateFileStream(inputPath + "/make-accessible.json", kPsReadOnly)
-if not stm:
+cmdStm = None
+
+# load the make-accessible command from JSON or use the default
+if commandPath == "":
+    cmdStm = pdfix.CreateMemStream()
+    if not command.SaveCommandsToStream(kCommandMakeAccessible, cmdStm, kDataFormatJson, kSaveFull):
+        raise Exception(pdfix.GetError())
+else:
+    cmdStm = pdfix.CreateFileStream(commandPath, kPsReadOnly)
+    if not cmdStm:
+        raise Exception(pdfix.GetError())
+
+if not command.LoadParamsFromStream(cmdStm, kDataFormatJson):
     raise Exception(pdfix.GetError())
 
-if not cmd.LoadParamsFromStream(stm, kDataFormatJson):
-    raise Exception(pdfix.GetError())
-stm.Destroy()
+cmdStm.Destroy()
 
-if not cmd.Run():
+# run the command
+if not command.Run():
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):
