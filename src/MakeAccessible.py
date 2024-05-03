@@ -4,6 +4,8 @@
 from Utils import inputPath, outputPath
 from pdfixsdk.Pdfix import *
 
+commandPath = ""#inputPath + "/make-accessible.json"
+
 pdfix  = GetPdfix()
 if pdfix is None:
     raise Exception('Pdfix Initialization fail')
@@ -12,19 +14,27 @@ doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
-# preflight document for better tagging structure (optional)
-tmpl = doc.GetTemplate()
-for i in range(0, doc.GetNumPages()):
-    tmpl.AddPage(i, 0, None)
-tmpl.Update(0, None)
+command = doc.GetCommand()
 
-# set the document title and language
-title = "Document title"
-lang = "en-US"
+cmdStm = None
 
-# run make accessibile
-accessibleParams = PdfAccessibleParams()
-if not doc.MakeAccessible(accessibleParams, title, lang, 0, None):
+# load the make-accessible command from JSON or use the default
+if commandPath == "":
+    cmdStm = pdfix.CreateMemStream()
+    if not command.SaveCommandsToStream(kCommandMakeAccessible, cmdStm, kDataFormatJson, kSaveFull):
+        raise Exception(pdfix.GetError())
+else:
+    cmdStm = pdfix.CreateFileStream(commandPath, kPsReadOnly)
+    if not cmdStm:
+        raise Exception(pdfix.GetError())
+
+if not command.LoadParamsFromStream(cmdStm, kDataFormatJson):
+    raise Exception(pdfix.GetError())
+
+cmdStm.Destroy()
+
+# run the command
+if not command.Run():
     raise Exception(pdfix.GetError())
 
 if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):

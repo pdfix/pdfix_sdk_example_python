@@ -34,7 +34,7 @@ if image is None:
 renderParams = PdfPageRenderParams()
 renderParams.image = image
 renderParams.matrix = pageView.GetDeviceMatrix()
-if not page.DrawContent(renderParams, 0, None):
+if not page.DrawContent(renderParams):
     raise Exception('Unable to draw content : ' + pdfix.GetError())  
 
 # save image to file 
