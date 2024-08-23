@@ -2,7 +2,7 @@
 # Example how to add a comment with reply into PDF.
 
 from os import *
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath

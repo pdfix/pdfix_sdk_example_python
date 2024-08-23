@@ -2,7 +2,7 @@
 # Pdfix initialization example
 
 import Utils
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:

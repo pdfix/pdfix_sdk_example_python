@@ -2,7 +2,7 @@
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 commandPath = ""#inputPath + "/make-accessible.json"
 
@@ -21,7 +21,7 @@ cmdStm = None
 # load the make-accessible command from JSON or use the default
 if commandPath == "":
     cmdStm = pdfix.CreateMemStream()
-    if not command.SaveCommandsToStream(kCommandMakeAccessible, cmdStm, kDataFormatJson, kSaveFull):
+    if not command.SaveCommandsToStream(kActionMakeAccessible, cmdStm, kDataFormatJson, kSaveFull):
         raise Exception(pdfix.GetError())
 else:
     cmdStm = pdfix.CreateFileStream(commandPath, kPsReadOnly)

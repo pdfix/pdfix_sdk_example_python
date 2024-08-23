@@ -28,7 +28,7 @@ pip3 install pdfix-sdk
 
 ## Code Example
 ```
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 pdfix  = GetPdfix()
 doc = pdfix.OpenDoc("test.pdf", "")

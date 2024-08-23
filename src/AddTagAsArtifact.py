@@ -2,7 +2,7 @@
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 # find any non-tagged objects in the page content and mark them as artifact
 def MarkUntaggedObjectsAsArtifact(page:PdfPage):

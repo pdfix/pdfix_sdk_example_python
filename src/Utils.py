@@ -2,7 +2,7 @@
 # Pdfix utils
 
 import platform, os, math
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 # load pdfix library from the current folder
 basePath = os.path.dirname(os.path.abspath(__file__))
