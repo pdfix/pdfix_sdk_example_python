@@ -3,7 +3,7 @@
 
 # import utils to load required shared libraries
 from Utils import *
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:

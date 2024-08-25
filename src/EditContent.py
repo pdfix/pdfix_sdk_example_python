@@ -1,4 +1,4 @@
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath

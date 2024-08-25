@@ -1,5 +1,5 @@
 import os
-from pdfixsdk.Pdfix import *
+from pdfixsdk import *
 from Utils import inputPath, outputPath
 
 
