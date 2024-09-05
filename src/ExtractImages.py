@@ -24,11 +24,17 @@ def SaveImage(pdfix, page, element):
         pageView = page.AcquirePageView(2.0, kRotate0)
         devRect = pageView.RectToDevice(bbox)
 
+        # move dev rect to 0,0 - content will be drawn to the top-left corner
+        devRect.right -= devRect.left
+        devRect.left = 0
+        devRect.bottom -= devRect.top
+        devRect.top = 0
+
         # prepare image 
         psImage = pdfix.CreateImage(pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb)        
         renderParams = PdfPageRenderParams()
         renderParams.clip_box = bbox
-        renderParams.image = image
+        renderParams.image = psImage
         renderParams.matrix = pageView.GetDeviceMatrix()
         page.DrawContent(renderParams)
 
