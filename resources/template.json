@@ -1,0 +1,308 @@
+{
+    "metadata": {
+        "author": "name",
+        "created": "2024-10-18",
+        "modified": "2024-10-18",
+        "notes": "",
+        "sdk_version": "8.1.9",
+        "version": "1"
+    },
+    "settings": {
+        "page_tag": "NonStruct",
+        "retain_pdfua": "true",
+        "substructure_form_XObject": "true"
+    },
+    "template": {
+        "pagemap": [
+            {
+                "angle_deviation": "0.015708",
+                "artifact_border_distance_max": "2",
+                "artifact_font_size": "40",
+                "artifact_similarity": "0.7",
+                "artifact_w1": "1",
+                "artifact_w2": "1",
+                "background_color_blue": "255",
+                "background_color_diff": "2",
+                "background_color_green": "255",
+                "background_color_red": "255",
+                "bbox_expansion": "4",
+                "caption_alignment_h": "4",
+                "caption_alignment_v": "4",
+                "caption_distance": "80",
+                "char_clip_ratio": "0.5",
+                "concurrent_threads": "0",
+                "element_alignment_ratio": "0.5",
+                "element_isolated_caption": "1",
+                "element_isolated_image_similarity": "0.7",
+                "element_isolated_image_w1": "1",
+                "element_isolated_image_w2": "1",
+                "element_isolated_image_w3": "1",
+                "element_isolated_similarity": "0.7",
+                "element_isolated_w1": "1",
+                "element_isolated_w2": "1",
+                "element_isolated_width_max": "0",
+                "element_isolated_width_max_ratio": "10",
+                "element_isolated_width_min": "0",
+                "element_isolated_width_min_ratio": "4",
+                "element_line_similarity": "0.6",
+                "element_line_w1": "1",
+                "element_line_width_max": "8",
+                "element_line_width_max_ratio": "1",
+                "footer_ratio": "0.15",
+                "graphic_table_alignment_distance": "0.8",
+                "graphic_table_chart_similarity": "0.3",
+                "graphic_table_image_similarity": "0.7",
+                "graphic_table_image_w1": "-1",
+                "graphic_table_image_w2": "-1",
+                "graphic_table_image_w3": "-1",
+                "graphic_table_image_w4": "1",
+                "graphic_table_image_w5": "1",
+                "graphic_table_split_col_max": "5",
+                "graphic_table_split_layout_similarity": "0.7",
+                "graphic_table_split_row_max": "5",
+                "graphic_table_split_similarity": "0.7",
+                "graphic_table_split_w1": "1",
+                "graphic_table_split_w2": "1",
+                "graphic_table_split_w3": "1",
+                "graphic_table_split_w4": "0.5",
+                "graphic_table_split_w5": "0.5",
+                "graphic_table_split_w6": "1",
+                "header_ratio": "0.15",
+                "image_background_text": "1",
+                "image_join_distance": "8",
+                "image_overlap_distance": "1",
+                "initial_element_expansion": "0",
+                "isolated_element_ratio": "6",
+                "isolated_text": "80",
+                "isolated_text_ratio": "10",
+                "label_alignment_h": "2",
+                "label_baseline_ration": "0.14",
+                "label_distance_ratio": "10",
+                "label_image_distance": "8",
+                "label_image_w1": "1",
+                "label_image_w10": "0",
+                "label_image_w2": "1",
+                "label_image_w3": "1",
+                "label_image_w4": "0.25",
+                "label_image_w5": "0.25",
+                "label_image_w6": "1",
+                "label_image_w7": "1",
+                "label_image_w8": "0",
+                "label_image_w9": "0",
+                "label_image_width_max": "0",
+                "label_image_width_max_ratio": "6",
+                "label_image_width_min": "0",
+                "label_image_width_min_ratio": "1",
+                "label_sibling_dist_ratio": "1.2",
+                "label_word_distance": "0",
+                "label_word_distance_ratio": "1",
+                "label_word_w1": "1",
+                "label_word_w2": "1",
+                "mc_detect": "1",
+                "object_intersection": "0.1",
+                "object_isolated": "16",
+                "path_object_max": "2000",
+                "path_object_min": "100",
+                "preflight_artifact_cluster_points": "2",
+                "preflight_artifact_distance": "0.7",
+                "preflight_artifact_font_size_min": "32",
+                "preflight_artifact_w1": "1",
+                "preflight_artifact_w2": "1",
+                "preflight_artifact_w3": "1",
+                "preflight_artifact_w4": "1",
+                "preflight_artifact_w5": "1",
+                "preflight_column_alignment_distance": "4",
+                "preflight_column_width_distance": "20",
+                "preflight_columns": "1",
+                "rd_column_distance": "0.8",
+                "rd_sort": "0",
+                "rd_sort_direction": "0",
+                "rect_image_similarity": "0.7",
+                "rotation_detect": "1",
+                "sect_table_alignment_distance": "0.4",
+                "sect_table_alignment_type": "2",
+                "sect_table_col_alignment_type": "1",
+                "sect_table_col_distance": "0.8",
+                "sect_table_col_similarity": "0.36",
+                "sect_table_col_similarity_type": "0",
+                "sect_table_column_similarity": "0.5",
+                "sect_table_image_col_gs": "1",
+                "sect_table_image_col_height_max": "0",
+                "sect_table_image_col_height_max_ratio": "2",
+                "sect_table_image_col_height_min": "0",
+                "sect_table_image_col_height_min_ratio": "1",
+                "sect_table_image_col_w1": "1",
+                "sect_table_image_col_width_max": "0",
+                "sect_table_image_col_width_max_ratio": "4",
+                "sect_table_image_col_width_min": "0",
+                "sect_table_image_col_width_min_ratio": "1",
+                "sect_table_image_similarity": "0.7",
+                "sect_table_image_similarity_w1": "1",
+                "sect_table_image_similarity_w2": "1",
+                "sect_table_paragraph_similarity": "0.7",
+                "sect_table_row_alignment_type": "1",
+                "sect_table_text_col_w1": "1",
+                "sect_table_text_col_w2": "1",
+                "sect_table_text_col_width_max": "0",
+                "sect_table_text_col_width_max_ratio": "8",
+                "sect_table_text_col_width_min": "0",
+                "sect_table_text_col_width_min_ratio": "1",
+                "statement": "$if",
+                "table_alignment_h": "1",
+                "table_alignment_v": "4",
+                "table_detect_form": "1",
+                "table_detect_sect": "1",
+                "table_line_intersection": "1",
+                "table_span_col_ratio": "0.1",
+                "table_span_row_ratio": "0.2",
+                "text_chunk_distance": "0",
+                "text_chunk_distance_max": "0",
+                "text_chunk_distance_max_ratio": "6",
+                "text_chunk_distance_ratio": "0.42",
+                "text_chunk_simple_distance": "0.4",
+                "text_chunk_word_distance": "0.1",
+                "text_column_similarity": "0.7",
+                "text_heading_h1": "0",
+                "text_heading_h2": "0",
+                "text_heading_h3": "0",
+                "text_height": "8",
+                "text_justify_similarity": "0.96",
+                "text_line_baseline_ratio": "0.1",
+                "text_line_distance_max": "0",
+                "text_line_distance_max_ratio": "3.6",
+                "text_line_join_distance": "2",
+                "text_line_join_font_size_distance": "0",
+                "text_line_subscript_font_ratio": "1",
+                "text_line_subscript_len": "6",
+                "text_line_subscript_space_ratio": "0.5",
+                "text_line_underline_char_distance_ratio": "0.1",
+                "text_line_underline_distance": "2.6",
+                "text_only": "0",
+                "text_paragraph_similarity": "0.7",
+                "text_simple_similarity": "0.96",
+                "text_split_distance": "0.2",
+                "text_table_similarity": "0.65",
+                "toc_word_distance": "0.6",
+                "toc_word_w1": "1",
+                "word_distance": "0",
+                "word_distance_ratio": "0.1",
+                "word_space_distance_max": "0",
+                "word_space_distance_max_ratio": "10",
+                "word_space_splitter_ratio": "2",
+                "word_space_type": "0",
+                "word_space_update": "0.1",
+                "word_space_width_min_ratio": "0.1",
+                "word_space_width_ratio": "0.6",
+                "word_splitter_distance": "4"
+            }
+        ],
+        "pagemap_regex": [
+            {
+                "label_chars": ".()[]",
+                "number_chars": "-+.,%\\u20AC$\\u00A5\\u00A3",
+                "numbering_splitter_chars": ".()[]",
+                "regex_bullet": "^[\\u2010\\u2011\\u2212\\u005E\\u005B\\uF0A7\\uF097\\uF0BB\\u25CF\\u2022\\u25D8\\u25CB\\u25D9\\u2023\\u2043\\uF0B7\\u2212\\u204C\\u204D\\u25E6\\u29BE\\u29BF\\u21E8\\u25BA\\u25C4\\u2219\\u25A0\\uF06C\\u25A1\\u005D\\u25C6]$",
+                "regex_bullet_font": "(Wingdings)|(Symbol)",
+                "regex_chart_caption": "((^chart)|(^map))",
+                "regex_colon": ":$",
+                "regex_comma": "[,;]$",
+                "regex_decimal_numbering": "^[\\[\\(]?(?:\\d{1,4}\\.){0,5}\\d{0,4}\\s?[\\)\\]\\.]?$",
+                "regex_filling": "[._]{2,}",
+                "regex_filling_chars": "._",
+                "regex_first_cap": "^[A-Z]",
+                "regex_hyphen": "-$",
+                "regex_image_caption": "((^image)|(^img\\.)|(^figure)|(^fig\\.))",
+                "regex_label": "^[\\[\\(]?((M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))|(\\d+)|([a-zA-Z]))[\\)\\]\\.]$",
+                "regex_letter": "^[A-Za-z]$",
+                "regex_letter_numbering": "^[\\[\\(]?[A-Za-z][\\)\\]\\.]$",
+                "regex_note_caption": "((^source\\:)|(^note\\:))",
+                "regex_page_number": "(^\\d+$)|(^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$)",
+                "regex_roman_numbering": "^[\\[\\(]?M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[\\)\\]\\.]?$",
+                "regex_table_caption": "((^table)|(^tab\\.))",
+                "regex_terminal": "[\\.\\!\\?]$",
+                "regex_toc_caption": "((^content)|(^toc))",
+                "statement": "$if"
+            }
+        ],
+        "text_update": [
+            {
+                "heading": "h1",
+                "query": {
+                    "$and": [
+                        {
+                            "$0_font_name": {
+                                "$regex": "Arial-Black"
+                            }
+                        },
+                        {
+                            "$0_font_size": [
+                                {
+                                    "$gte": "25.00"
+                                },
+                                {
+                                    "$lte": "25.00"
+                                }
+                            ]
+                        }
+                    ],
+                    "param": [
+                        "pde_text"
+                    ]
+                },
+                "statement": "$if"
+            },
+            {
+                "heading": "h2",
+                "query": {
+                    "$and": [
+                        {
+                            "$0_font_name": {
+                                "$regex": "Arial-BoldMT"
+                            }
+                        },
+                        {
+                            "$0_font_size": [
+                                {
+                                    "$gte": "12.00"
+                                },
+                                {
+                                    "$lte": "12.00"
+                                }
+                            ]
+                        }
+                    ],
+                    "param": [
+                        "pde_text"
+                    ]
+                },
+                "statement": "$if"
+            },
+            {
+                "heading": "h2",
+                "query": {
+                    "$and": [
+                        {
+                            "$0_font_name": {
+                                "$regex": "Arial-Black"
+                            }
+                        },
+                        {
+                            "$0_font_size": [
+                                {
+                                    "$gte": "12.00"
+                                },
+                                {
+                                    "$lte": "12.00"
+                                }
+                            ]
+                        }
+                    ],
+                    "param": [
+                        "pde_text"
+                    ]
+                },
+                "statement": "$if"
+            }
+        ]
+    }
+}
