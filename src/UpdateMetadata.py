@@ -1,5 +1,5 @@
-# RenderPage.py
-# Copyright (c) 2018 PDFix. All Rights Reserved.
+# UpdateMetadata.py
+# Python example for updateing the XMP metadata and document Info dictionary with PDFix SDK
 
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
