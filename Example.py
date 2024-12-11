@@ -48,6 +48,9 @@ import OpenDocFromStream
 print("RenderPage")
 import RenderPage
 
+print("PDF to JSON")
+import PdfToJson
+
 print("SetFormFieldValue")
 import SetFormFieldValue
 
