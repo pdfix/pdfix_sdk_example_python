@@ -9,7 +9,7 @@ from Utils import inputPath, outputPath
 pdfix = GetPdfix()
 
 # open tagged PDF
-doc = pdfix.OpenDoc(inputPath + "/input.pdf", "")
+doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 
 # prepare PDF to JSON conversion
 jsonConv = doc.CreateJsonConversion()

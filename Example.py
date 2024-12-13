@@ -30,6 +30,12 @@ import EditContent
 print ("Edit Page Object MCID")
 import EditPageObjectMCID
 
+print ("Edit Tag Properties")
+import EditTagProperties
+
+print ("Edit Tag Reading Order")
+import EditTagReadingOrder
+
 print("ExtractImages")
 import ExtractImages
 
