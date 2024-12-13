@@ -37,5 +37,9 @@ doc.close()
 
 ```
 
+## Other Python real world projects with PDFix SDK
+https://github.com/topics/pdfix-actions
+
+
 ## Have a question? Need help?
 Let us know and we’ll get back to you. Write us to support@pdfix.net or fill the [contact form](https://pdfix.net/support/).
