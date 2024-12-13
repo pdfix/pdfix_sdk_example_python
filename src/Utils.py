@@ -2,6 +2,7 @@
 # Pdfix utils
 
 import platform, os, math
+import ctypes
 from pdfixsdk import *
 
 # load pdfix library from the current folder
@@ -61,4 +62,17 @@ def PdfMatrixInverse(orig:PdfMatrix):
   inverse.e = (orig.c * orig.f - orig.d * orig.e) / i
   inverse.f = (orig.a * orig.f - orig.b * orig.e) / j
   return inverse
+
+
+# return raw data from stream object
+def stream_to_data(stm):
+  size = stm.GetSize()
+  raw_data = (ctypes.c_ubyte * size)()
+  stm.Read(0, raw_data, size)
+  return raw_data
+
+def bytearray_to_data(byte_array): 
+  size = len(byte_array)
+  return (ctypes.c_ubyte * size).from_buffer(byte_array)
+
 

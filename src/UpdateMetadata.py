@@ -2,7 +2,7 @@
 # Python example for updateing the XMP metadata and document Info dictionary with PDFix SDK
 
 # import utils to load required shared libraries
-from Utils import inputPath, outputPath
+from Utils import inputPath, outputPath, stream_to_data, bytearray_to_data
 from pdfixsdk import *
 import ctypes
 
@@ -24,17 +24,13 @@ doc.SetInfo("Creator", creator[::-1])
 
 # read/write document XMP metadata
 meta_stm_obj = doc.GetMetadata()
-size = meta_stm_obj.GetSize()
-raw_data = (ctypes.c_ubyte * size)()
-readSize = meta_stm_obj.Read(0, raw_data, size)
-byte_array = bytearray(raw_data)
+byte_array = bytearray(stream_to_data(meta_stm_obj))
 
 # load/modify XMP metadata 
 byte_array.extend(bytearray(b'<modified></modified>'))
 
 # write document XMP metadata
-size = len(byte_array)
-raw_data = (ctypes.c_ubyte * size).from_buffer(byte_array)
+raw_data = bytearray_to_data(byte_array)
 meta_stm_dict = meta_stm_obj.GetStreamDict().Clone(False)
 meta_stm_obj = doc.CreateStreamObject(True, meta_stm_dict, raw_data, size)
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
