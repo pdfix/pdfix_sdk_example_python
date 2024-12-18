@@ -60,4 +60,7 @@ import PdfToJson
 print("SetFormFieldValue")
 import SetFormFieldValue
 
+print("TagLink")
+import TagLink
+
 print("Success")
