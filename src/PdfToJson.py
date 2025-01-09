@@ -9,12 +9,15 @@ from Utils import inputPath, outputPath
 pdfix = GetPdfix()
 
 # open tagged PDF
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+
+# prepare PDF to JSON conversion params
+params = PdfJsonParams()
+params.flags = (kJsonExportStructTree | kJsonExportDocInfo | kJsonExportBBox | kJsonExportText)  # see PdfJsonFlags flagss to extract other conten
 
 # prepare PDF to JSON conversion
 jsonConv = doc.CreateJsonConversion()
-params = PdfJsonParams()
-params.flags = kJsonExportStructTree  # see PdfJsonFlags flagss to extract other content
+jsonConv.SetParams(params)
 
 # extract data to stream
 memStm = pdfix.CreateMemStream()
@@ -25,6 +28,8 @@ sz = memStm.GetSize()
 data = bytearray(sz)
 rawData = (ctypes.c_ubyte * sz).from_buffer(data)
 memStm.Read(0, rawData, len(rawData))
+
+print(data.decode("utf-8"))
 
 # cleanup
 memStm.Destroy()
