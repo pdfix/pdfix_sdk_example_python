@@ -3,6 +3,7 @@
 
 import platform, os, math
 import ctypes
+import json
 from pdfixsdk import *
 
 # load pdfix library from the current folder
@@ -75,4 +76,10 @@ def bytearray_to_data(byte_array):
   size = len(byte_array)
   return (ctypes.c_ubyte * size).from_buffer(byte_array)
 
-
+# function to convert json dictionary to c_ubyte array
+def jsonToRawData(json_dict):
+    json_str = json.dumps(json_dict)
+    json_data = bytearray(json_str.encode("utf-8"))
+    json_data_size = len(json_str)
+    json_data_raw = (ctypes.c_ubyte * json_data_size).from_buffer(json_data)
+    return json_data_raw, json_data_size
