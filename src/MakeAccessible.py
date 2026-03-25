@@ -1,21 +1,27 @@
 # import utils to load required shared libraries
+print("START", flush=True)
 import json
 
 from Utils import inputPath, outputPath
+print("Loading Pdfix...", flush=True)
 from pdfixsdk import *
 
+print("Loading Utils...", flush=True)
 import Utils
 
 commandPath = ""  # inputPath + "/make-accessible.json"
 
+print("GetPdfix...", flush=True)
 pdfix = GetPdfix()
 if pdfix is None:
     raise Exception("Pdfix Initialization fail")
 
+print("OpenDoc...", flush=True)
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
     raise Exception("Unable to open pdf : " + pdfix.GetError())
 
+print("GetCommand...", flush=True)
 command = doc.GetCommand()
 if command is None:
     raise Exception(pdfix.GetError())
@@ -78,11 +84,16 @@ try:
     cmdStm = None
 
     # run the command
+    print("Running command...", flush=True)
     if not command.Run():
         raise Exception(pdfix.GetError())
 
+    print("Save...", flush=True)
     if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):
         raise Exception(pdfix.GetError())
+except Exception as e:
+    print(f"ERROR: {e}", flush=True)
+    raise    
 
 finally:
     if cmdStm is not None:
