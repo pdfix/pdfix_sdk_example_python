@@ -1,69 +1,53 @@
-# Run all examples
-import os, sys
-sys.path.insert(1, os.path.dirname(os.path.abspath(__file__)) + '/src')
+import os
+import sys
+import traceback
+import importlib
 
+# add src to path
+sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
-print("AddComment")
-import AddComment
+modules = [
+    "AddComment",
+    "AddTags",
+    "AddTagAsArtifact",
+    "AddWatermark",
+    "ConvertToHtml",
+    "ConvertToHtmlByPages",
+    "DocumentMetadata",
+    "EditContent",
+    "EditPageObjectMCID",
+    "EditTagProperties",
+    "EditTagReadingOrder",
+    "ExtractImages",
+    "ExtractTables",
+    "ExtractText",
+    "MakeAccessible",
+    "OpenDocFromStream",
+    "RenderPage",
+    "PdfToJson",
+    "SetFormFieldValue",
+    "TagLink",
+    "ReplaceFont",
+]
 
-print("AddTags")
-import AddTags
+failed = []
 
-print("AddTagAsArtifact")
-import AddTagAsArtifact
+for module_name in modules:
+    print(f"\n=== Running: {module_name} ===")
+    try:
+        importlib.import_module(module_name)
+        print(f"OK: {module_name}")
+    except Exception as e:
+        print(f"FAILED: {module_name}")
+        print(f"Error: {e}")
+        traceback.print_exc()
+        failed.append(module_name)
 
-print("AddWatermark")
-import AddWatermark
-
-print("ConvertToHtml")
-import ConvertToHtml
-
-print("ConvertToHtmlByPages")
-import ConvertToHtmlByPages
-
-print("DocumentMetadata")
-import DocumentMetadata
-
-print("Edit content")
-import EditContent
-
-print ("Edit Page Object MCID")
-import EditPageObjectMCID
-
-print ("Edit Tag Properties")
-import EditTagProperties
-
-print ("Edit Tag Reading Order")
-import EditTagReadingOrder
-
-print("ExtractImages")
-import ExtractImages
-
-print("ExtractTables")
-import ExtractTables
-
-print("ExtractText")
-import ExtractText
-
-print("MakeAccessible")
-import MakeAccessible
-
-print("OpenDocFromStream")
-import OpenDocFromStream
-
-print("RenderPage")
-import RenderPage
-
-print("PDF to JSON")
-import PdfToJson
-
-print("SetFormFieldValue")
-import SetFormFieldValue
-
-print("TagLink")
-import TagLink
-
-print("ReplaceFont")
-import ReplaceFont
-
-print("Success")
+print("\n=========================")
+if failed:
+    print("FAILED MODULES:")
+    for m in failed:
+        print(f" - {m}")
+    sys.exit(1)
+else:
+    print("ALL MODULES PASSED")
