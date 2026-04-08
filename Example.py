@@ -27,7 +27,6 @@ modules = [
     "PdfToJson",
     "SetFormFieldValue",
     "TagLink",
-    "ReplaceFont",
 ]
 
 failed = []
