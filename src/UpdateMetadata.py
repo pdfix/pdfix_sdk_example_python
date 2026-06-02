@@ -30,6 +30,7 @@ byte_array = bytearray(stream_to_data(meta_stm_obj))
 byte_array.extend(bytearray(b'<modified></modified>'))
 
 # write document XMP metadata
+size = len(byte_array)
 raw_data = bytearray_to_data(byte_array)
 meta_stm_dict = meta_stm_obj.GetStreamDict().Clone(False)
 meta_stm_obj = doc.CreateStreamObject(True, meta_stm_dict, raw_data, size)
