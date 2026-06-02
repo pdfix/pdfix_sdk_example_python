@@ -7,6 +7,8 @@ from pdfixsdk import *
 from Utils import inputPath, outputPath
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 # open tagged PDF
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")

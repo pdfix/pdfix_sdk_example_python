@@ -5,6 +5,8 @@ from Utils import inputPath, outputPath
 from pdfixsdk import *
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 # process structure elements recursively 
 # function returns parent of the found tag and its index within the parent

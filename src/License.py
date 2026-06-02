@@ -5,6 +5,8 @@ from Utils import stream_to_data
 import json
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 # STANDARD LICENSE (ACTIVATION)
 # activation of the license using activation key
@@ -32,3 +34,5 @@ pdfix.GetStandardAuthorization().SaveToStream(mem_stm, kDataFormatJson)
 bytes = bytearray(stream_to_data(mem_stm))
 print(json.dumps(bytes.decode("utf-8"), indent=2))
 mem_stm.Destroy()
+
+pdfix.Destroy()

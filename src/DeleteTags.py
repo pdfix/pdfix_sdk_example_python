@@ -22,11 +22,11 @@ def jsonToRawData(json_dict):
 # initialize pdfix and open document
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # delete_tags command params
 json_dict = { 
@@ -55,9 +55,9 @@ memStm.Destroy()
 
 # execute command
 if not command.Run():
-    raise Exception('Unable to run command DeleteTags : ' + str(pdfix.GetError()))
+    raise RuntimeError('Unable to run command DeleteTags : ' + str(pdfix.GetError()))
 
 if not doc.Save(outputPath + "/DeleteTags.pdf", kSaveFull):
-  raise Exception(pdfix.GetError())
+  raise RuntimeError(pdfix.GetError())
 
 doc.Close()

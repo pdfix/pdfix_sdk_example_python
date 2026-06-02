@@ -8,27 +8,27 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 doc_template = doc.GetTemplate();
 if doc_template is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 confstm = pdfix.CreateFileStream(inputPath + "/config.json", kPsReadOnly)
 if (confstm):
     if doc_template.LoadFromStream(confstm, kDataFormatJson) is False:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     confstm.Destroy()
 
 def ImageToBase64(image: PsImage) -> str:
     stm = pdfix.CreateMemStream()
     imageParams = PdfImageParams()
     if not image.SaveToStream(stm, imageParams):
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     sz = stm.GetSize()
     imageData = bytearray(sz)
     rawData = (ctypes.c_ubyte * sz).from_buffer(imageData)
@@ -53,7 +53,7 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
 
     # draw content to image
     if not page.DrawContent(renderParams):
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     
     node["imageData"] = ImageToBase64(renderParams.image)
     renderParams.image.Destroy()
@@ -124,19 +124,19 @@ for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise Exception('Acquire Page fail : ' + pdfix.GetError())
+        raise RuntimeError('Acquire Page fail : ' + pdfix.GetError())
 
     # get the page map of the current page
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
     if not pageMap.CreateElements():
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
 
     # extract the main page container recursively
     container = pageMap.GetElement()
     if container is None:
-        raise Exception('Get page element failure : ' + pdfix.GetError())
+        raise RuntimeError('Get page element failure : ' + pdfix.GetError())
     ExtractPageElement(container, pageNode)
 
     # append all artifacts into the output

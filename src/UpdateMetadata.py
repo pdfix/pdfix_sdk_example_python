@@ -8,11 +8,11 @@ import ctypes
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # manage document info dictionary
 title = doc.GetInfo("Title")
@@ -37,4 +37,4 @@ meta_stm_obj = doc.CreateStreamObject(True, meta_stm_dict, raw_data, size)
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
 if not doc.Save(outputPath + "/UpdateMetadata.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())

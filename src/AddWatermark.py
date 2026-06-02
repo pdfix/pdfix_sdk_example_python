@@ -7,31 +7,31 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 img_stm = pdfix.CreateFileStream( inputPath + "/watermark.png" , kPsReadOnly)
 if img_stm is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 # identify image format from file path
 format = kImageFormatPng
 image_obj = doc.CreateXObjectFromImage(img_stm, format, 0)
 if image_obj is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 page_num = doc.GetNumPages()
 for i in range(page_num):
     page = doc.AcquirePage(i)
     if page is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
 
     content = page.GetContent()
     if content is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
             
     xobjdict = image_obj.GetStreamDict()
     width = xobjdict.GetNumber("Width")
@@ -101,6 +101,6 @@ for i in range(page_num):
     page.Release()
 
 if (not doc.Save(outputPath + "/AddWatermark.pdf", kSaveFull)):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()

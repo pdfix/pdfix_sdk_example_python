@@ -8,18 +8,18 @@ import ctypes
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 title = doc.GetInfo("Title")
 doc.SetInfo("Title", "My next presenttion")
 
 metaStm = doc.GetMetadata()
 if metaStm is None:
-    raise Exception('Unable to read document metadata: ' + pdfix.GetError()) 
+    raise RuntimeError('Unable to read document metadata: ' + pdfix.GetError()) 
 
 sz = metaStm.GetSize()
 data = bytearray(sz)
@@ -28,7 +28,7 @@ metaStm.Read(0, rawData, len(rawData))
 
 stm = pdfix.CreateFileStream(outputPath + "/DocumentMetadata.xml", kPsTruncate)
 if stm is None:
-    raise Exception('Unable to open output file : ' + pdfix.GetError()) 
+    raise RuntimeError('Unable to open output file : ' + pdfix.GetError()) 
 stm.Write(0, rawData, len(rawData))
 stm.Destroy()
 

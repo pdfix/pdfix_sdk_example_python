@@ -7,11 +7,11 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 def GetText (element, output):
     elemType = element.GetType()
@@ -83,19 +83,19 @@ for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)    
     if page is None:
-        raise Exception('Acquire Page fail : ' + pdfix.GetErrorType())
+        raise RuntimeError('Acquire Page fail : ' + pdfix.GetErrorType())
     
     # get the page map of the current page
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
     if not pageMap.CreateElements():
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
     
     # get page container
     container = pageMap.GetElement()
     if container is None:
-        raise Exception('Get page element failure : ' + pdfix.GetErrorType())
+        raise RuntimeError('Get page element failure : ' + pdfix.GetErrorType())
     
     SaveTable(container)
     page.Release()

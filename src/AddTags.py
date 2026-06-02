@@ -6,16 +6,16 @@ from pdfixsdk import *
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # load template configuration from JSON file
 tmpl = doc.GetTemplate()
 if not tmpl:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 preflight = True
 if preflight:
@@ -37,13 +37,13 @@ else:
     # load the template from a pre-created JSON
     tmplStm = pdfix.CreateFileStream(inputPath + "/template.json", kPsReadOnly)
     if not tmpl.LoadFromStream(tmplStm, kDataFormatJson):
-        raise Exception('Unable to open pdf : ' + pdfix.GetError())
+        raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 tagsParams = PdfTagsParams()
 if not doc.AddTags(tagsParams):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 if not doc.Save(outputPath + "/AddTags.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()

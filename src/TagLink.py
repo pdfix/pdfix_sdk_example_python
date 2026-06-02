@@ -6,6 +6,8 @@ from pdfixsdk import *
 from Utils import inputPath, outputPath
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 page = doc.AcquirePage(0)

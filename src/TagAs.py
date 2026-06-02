@@ -39,6 +39,8 @@ cmd = {
 }
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 
 # prepare the command data

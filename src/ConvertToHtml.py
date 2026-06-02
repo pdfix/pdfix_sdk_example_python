@@ -7,23 +7,23 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 htmlConv = doc.CreateHtmlConversion()
 if htmlConv is None:
-    raise Exception('Unable to open html doc : ' + pdfix.GetError())   
+    raise RuntimeError('Unable to open html doc : ' + pdfix.GetError())   
 
 # convert all pages at once
 htmlParams=PdfHtmlParams()
 htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG
 if not htmlConv.SetParams(htmlParams):
-    raise Exception('Unable to set params : ' + pdfix.GetError())    
+    raise RuntimeError('Unable to set params : ' + pdfix.GetError())    
 if not htmlConv.Save(outputPath + "/index.html"):
-    raise Exception('Unable to open html doc : ' + pdfix.GetError())    
+    raise RuntimeError('Unable to open html doc : ' + pdfix.GetError())    
     
 htmlConv.Destroy()
 doc.Close()

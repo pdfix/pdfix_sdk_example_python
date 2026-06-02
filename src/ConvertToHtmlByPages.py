@@ -8,15 +8,15 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 htmlConv = doc.CreateHtmlConversion()
 if htmlConv is None:
-    raise Exception('Unable to create html conversion : ' + pdfix.GetError())   
+    raise RuntimeError('Unable to create html conversion : ' + pdfix.GetError())   
 
 htmlParams=PdfHtmlParams()
 htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG| kHtmlNoExternalFONT
@@ -25,11 +25,11 @@ htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG| 
 #htmlParams.image_params.quality = 80
 
 if not htmlConv.SetParams(htmlParams):
-    raise Exception('Unable to set html conversion params : ' + pdfix.GetError())   
+    raise RuntimeError('Unable to set html conversion params : ' + pdfix.GetError())   
 
 docStm = pdfix.CreateFileStream(outputPath + "/page_1.html", kPsTruncate)
 if not docStm:
-    raise Exception('Unable to create html header file : ' + pdfix.GetError())
+    raise RuntimeError('Unable to create html header file : ' + pdfix.GetError())
 
 # write the head html node with css and javascript
 first = bytes("<html>\n<head>\n<title>PDFix sample</title>\n</head>\n<body>\n<script>\n",encoding='ascii')
@@ -51,14 +51,14 @@ docStm.Write(docStm.GetSize(), raw_third, len(raw_third))
 # save the main document node and one page
 for i in range(0, doc.GetNumPages()):
     if  not htmlConv.AddPage(i):
-        raise Exception('Unable to create html file : ' + pdfix.GetError())
+        raise RuntimeError('Unable to create html file : ' + pdfix.GetError())
     break
 
 # do not save the head node, just document and pages
 htmlParams.flags |= kHtmlNoHeadNode;
 
 if not htmlConv.SaveToStream(docStm):
-    raise Exception('Unable to save html doc : ' + pdfix.GetError())
+    raise RuntimeError('Unable to save html doc : ' + pdfix.GetError())
 
 # write terminal html
 last = bytes("</body>\n</html>",encoding='ascii')
@@ -68,4 +68,3 @@ docStm.Write(docStm.GetSize(), raw_last, len(raw_last))
 docStm.Destroy()
 
 doc.Close()
-pdfix.Destroy()

@@ -6,7 +6,7 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-  raise Exception('Pdfix Initialization fail')
+  raise RuntimeError('Pdfix Initialization fail')
 
 # check version
 major = pdfix.GetVersionMajor()
@@ -14,4 +14,5 @@ minor = pdfix.GetVersionMinor()
 patch = pdfix.GetVersionPatch()
 print("PDFix SDK Version " + str(major) + "." + str(minor) + "." + str(patch))
 
+pdfix.Destroy()
 

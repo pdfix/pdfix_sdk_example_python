@@ -4,6 +4,8 @@ from Utils import inputPath, outputPath
 
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 # open the document
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")

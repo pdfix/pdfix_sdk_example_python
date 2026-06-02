@@ -29,14 +29,14 @@ def RemoveParagraph(struct_elem:PdsStructElement):
             if kid_type == "P":
                 for j in range(kid_elem.GetNumChildren()-1, -1):
                     if not kid_elem.RemoveChild(j):
-                        raise Exception()
+                        raise RuntimeError()
             elif kid_type == "Figure":
                 # remove figure if does not contain an alt text
                 alt_len = kid_elem.GetAlt(None, 0)
                 if alt_len == 0:
                     for j in range(kid_elem.GetNumChildren()-1, -1):
                         if not kid_elem.RemoveChild(j):
-                            raise Exception()
+                            raise RuntimeError()
             else:
                 RemoveParagraph(kid_elem)
             # remove this element if it has no kids
@@ -50,25 +50,25 @@ def RemoveParagraph(struct_elem:PdsStructElement):
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # cleanup any previous structure tree
 if not doc.RemoveTags():
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 # autotag document first
 tagsParams = PdfTagsParams()
 if not doc.AddTags(tagsParams):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 # get the struct tree
 struct_tree = doc.GetStructTree()
 if struct_tree is None:
-    raise Exception()
+    raise RuntimeError()
 
 # tag text on the bottom of the page as artifact
 for i in range(struct_tree.GetNumChildren()):
@@ -84,6 +84,6 @@ for i in range(doc.GetNumPages()):
 
 # save document
 if not doc.Save(outputPath + "/AddTagAsArtifact.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()

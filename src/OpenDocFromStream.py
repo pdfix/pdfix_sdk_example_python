@@ -8,7 +8,7 @@ import ctypes
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 f = open(inputPath + "/test.pdf", "rb")
 data = bytearray(f.read())
@@ -21,7 +21,7 @@ memStm = pdfix.CreateMemStream()
 memStm.Write(0, raw_data, size)
 doc = pdfix.OpenDocFromStream(memStm, "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 doc.Close()
 memStm.Destroy()
 
@@ -29,12 +29,12 @@ memStm.Destroy()
 fileStm = pdfix.CreateFileStream(inputPath + "/test.pdf", kPsReadOnly)
 doc = pdfix.OpenDocFromStream(fileStm, "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # save PDF to to stream
 saveStm = pdfix.CreateMemStream()
 if not doc.SaveToStream(saveStm, kSaveFull):
-    raise Exception('Unable to save pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to save pdf : ' + pdfix.GetError())
 
 # write stream to file
 data = (ctypes.c_ubyte * saveStm.GetSize())()

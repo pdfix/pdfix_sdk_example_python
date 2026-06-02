@@ -8,15 +8,15 @@ from Utils import inputPath, outputPath
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception("Pdfix Initialization fail")
+    raise RuntimeError("Pdfix Initialization fail")
 
 doc_in = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc_in is None:
-    raise Exception("Unable to open pdf : " + pdfix.GetError())
+    raise RuntimeError("Unable to open pdf : " + pdfix.GetError())
 
 doc_out = pdfix.CreateDoc()
 if doc_out is None:
-    raise Exception("Unable to create pdf : " + pdfix.GetError())
+    raise RuntimeError("Unable to create pdf : " + pdfix.GetError())
 
 where_to_insert_index = -1
 from_page_index = 1
@@ -26,10 +26,10 @@ result = doc_out.InsertPages(
 )
 
 if not result:
-    raise Exception("Insert pages fail: " + pdfix.GetError())
+    raise RuntimeError("Insert pages fail: " + pdfix.GetError())
 
 if not doc_out.Save(outputPath + "/output.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc_out.Close()
 doc_in.Close()

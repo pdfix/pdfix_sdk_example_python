@@ -9,15 +9,15 @@ from Utils import inputPath, outputPath
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise Exception('Unable to acquire page : ' + pdfix.GetError())
+    raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
 
 cropBox = page.GetCropBox()
 
@@ -31,13 +31,13 @@ annot = page.CreateAnnot(kAnnotText, annotRect)
 annot.__class__ = PdfTextAnnot
 page.AddAnnot(-1, annot)
 if annot is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 annot.SetAuthor("Peter Brown")
 annot.SetContents("This is my comment.")
 annot.AddReply("Mark Fish", "This is some reply.")
 page.Release()
 
 if not doc.Save(outputPath + "/AddComment.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()

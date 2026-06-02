@@ -6,6 +6,8 @@ from pdfixsdk import *
 import uuid
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError('Pdfix Initialization fail')
 
 def process_struct_elem(elem: PdsStructElement):
   # read tag properties 

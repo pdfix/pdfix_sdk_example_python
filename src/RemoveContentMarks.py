@@ -16,11 +16,11 @@ outputPdf = outputPath + "/RemoveContentMarks.pdf"
 # initialize pdfix and open document
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception("Pdfix Initialization fail")
+    raise RuntimeError("Pdfix Initialization fail")
 
 doc = pdfix.OpenDoc(inputPdf, "")
 if doc is None:
-    raise Exception("Failed to open pdf : " + str(pdfix.GetError()))
+    raise RuntimeError("Failed to open pdf : " + str(pdfix.GetError()))
 
 # delete_tags command params
 json_dict = {
@@ -46,9 +46,9 @@ memStm.Destroy()
 
 # execute command
 if not command.Run():
-    raise Exception("Failed to run commend: " + pdfix.GetError())
+    raise RuntimeError("Failed to run commend: " + pdfix.GetError())
 
 if not doc.Save(outputPdf, kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
