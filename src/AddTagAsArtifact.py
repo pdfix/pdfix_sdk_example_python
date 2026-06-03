@@ -1,9 +1,8 @@
 # AddTagAsArtifact.py
 
-# import utils to load required shared libraries
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 
 # find any non-tagged objects in the page content and mark them as artifact
@@ -57,7 +56,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -91,7 +90,9 @@ for i in range(doc.GetNumPages()):
     page.Release()
 
 # save document
-if not doc.Save(f"{outputPath}/AddTagAsArtifact.pdf", kSaveFull):
+if not doc.Save(output_path / "AddTagAsArtifact.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

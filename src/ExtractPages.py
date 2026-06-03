@@ -3,14 +3,13 @@
 
 from pdfixsdk import *
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc_in = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc_in = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc_in is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -28,8 +27,10 @@ result = doc_out.InsertPages(
 if not result:
     raise RuntimeError(f"Unable to insert pages: {pdfix.GetError()}")
 
-if not doc_out.Save(f"{outputPath}/output.pdf", kSaveFull):
+if not doc_out.Save(output_path / "output.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc_out.Close()
 doc_in.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

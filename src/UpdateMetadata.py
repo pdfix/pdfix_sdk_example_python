@@ -1,17 +1,16 @@
 # UpdateMetadata.py
 # Python example for updateing the XMP metadata and document Info dictionary with PDFix SDK
 
-# import utils to load required shared libraries
 
 from pdfixsdk import *
 
-from Utils import bytearray_to_data, inputPath, outputPath, stream_to_data
+from Utils import bytearray_to_data, input_path, output_path, stream_to_data
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -46,7 +45,9 @@ if meta_stm_obj is None:
 
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
-if not doc.Save(f"{outputPath}/UpdateMetadata.pdf", kSaveFull):
+if not doc.Save(output_path / "UpdateMetadata.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

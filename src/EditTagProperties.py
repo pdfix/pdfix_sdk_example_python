@@ -5,14 +5,15 @@ import uuid
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 
 def process_struct_elem(elem: PdsStructElement):
     # read tag properties
     print(f"{elem.GetType(False)}")  # type [P, L, Table, ...]
     alt = elem.GetAlt()  # alt text
-    id = elem.GetId()  # id
+    element_id = elem.GetId()  # id
+    print(f"alt={alt}, id={element_id}")
     for i in range(
         elem.GetNumPages()
     ):  # multiple pages can appear if tag spans across multiple pages
@@ -48,7 +49,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -61,7 +62,9 @@ for i in range(struct_tree.GetNumChildren()):
     elem = struct_tree.GetStructElementFromObject(obj)
     process_struct_elem(elem)
 
-if not doc.Save(f"{outputPath}/EditTagProperties.pdf", kSaveFull):
+if not doc.Save(output_path / "EditTagProperties.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

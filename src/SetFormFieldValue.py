@@ -1,16 +1,15 @@
 # SetFormFieldValue.py
 # Example how to fill PDF form.
 
-# import utils to load required shared libraries
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -20,7 +19,9 @@ if field is not None:
     value = "New Value"
     field.SetValue(value)
 
-if not doc.Save(f"{outputPath}/SetFormFieldValue.pdf", kSaveFull):
+if not doc.Save(output_path / "SetFormFieldValue.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

@@ -7,7 +7,7 @@ import json
 
 from pdfixsdk import *
 
-from Utils import inputPath
+from Utils import input_path
 
 
 def ImageToBase64(image: PsImage) -> str:
@@ -108,7 +108,7 @@ def ExtractPageElement(elem: PdeElement, node: dict):
     count = elem.GetNumChildren()
     if count > 0:
         childList = []
-        for i in range(0, count):
+        for i in range(count):
             child = elem.GetChild(i)
             if child is not None:
                 childNode = {}
@@ -121,7 +121,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -129,7 +129,7 @@ doc_template = doc.GetTemplate()
 if doc_template is None:
     raise RuntimeError(pdfix.GetError())
 
-confstm = pdfix.CreateFileStream(f"{inputPath}/config.json", kPsReadOnly)
+confstm = pdfix.CreateFileStream(input_path / "config.json", kPsReadOnly)
 if confstm is None:
     raise RuntimeError(pdfix.GetError())
 
@@ -143,7 +143,7 @@ output = {}
 pagesList = []
 
 # iterate all pages to extract the content
-for i in range(0, doc.GetNumPages()):
+for i in range(doc.GetNumPages()):
     pageNode = {}
     # acquire page
     page = doc.AcquirePage(i)
@@ -165,7 +165,7 @@ for i in range(0, doc.GetNumPages()):
 
     # append all artifacts into the output
     artifactsNode = []
-    for j in range(0, pageMap.GetNumArtifacts()):
+    for j in range(pageMap.GetNumArtifacts()):
         artifactNode = {}
         ExtractPageElement(pageMap.GetArtifact(j), artifactNode)
         artifactsNode.append(artifactNode)
@@ -180,3 +180,5 @@ output["pageMap"] = pagesList
 print(json.dumps(output, indent=2))
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

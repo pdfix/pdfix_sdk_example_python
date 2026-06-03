@@ -3,7 +3,7 @@
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 
 def GetText(element, output):
@@ -17,7 +17,7 @@ def GetText(element, output):
         count = element.GetNumChildren()
         if count == 0:
             return
-        for i in range(0, count):
+        for i in range(count):
             child = element.GetChild(i)
             if child is not None:
                 GetText(child, output)
@@ -27,44 +27,42 @@ tableIndex = 1
 
 
 def SaveTable(element):
-    global tableIndex, outputPath
+    global tableIndex, output_path
     elem_type = element.GetType()
     if elem_type == kPdeTable:
         table = PdeTable(element.obj)
 
-        path = f"{outputPath}/ExtractTables_{tableIndex}.csv"
+        path = output_path / f"ExtractTables_{tableIndex}.csv"
         tableIndex += 1
-        output = open(path, "w")
         row_count = table.GetNumRows()
         col_count = table.GetNumCols()
 
-        for row in range(row_count):
-            for col in range(col_count):
-                cell = table.GetCell(row, col)
-                if not cell:
-                    continue
-                row_span = cell.GetRowSpan()
-                col_span = cell.GetColSpan()
+        with open(path, "w", encoding="utf-8") as output:
+            for row in range(row_count):
+                for col in range(col_count):
+                    cell = table.GetCell(row, col)
+                    if not cell:
+                        continue
+                    row_span = cell.GetRowSpan()
+                    col_span = cell.GetColSpan()
 
-                count = cell.GetNumChildren()
-                if (row_span != 0) and (col_span != 0) and (count > 0):
-                    output.write('"')
-                    for i in range(count):
-                        child = cell.GetChild(i)
-                        if (child.GetType() == kPdeText) and (child is not None):
-                            GetText(child, output)
-                        if i < count:
-                            output.write("")
+                    count = cell.GetNumChildren()
+                    if (row_span != 0) and (col_span != 0) and (count > 0):
+                        output.write('"')
+                        for i in range(count):
+                            child = cell.GetChild(i)
+                            if (child.GetType() == kPdeText) and (child is not None):
+                                GetText(child, output)
+                            if i < count:
+                                output.write("")
 
-                output.write(",")
+                    output.write(",")
 
-            if col < col_count:
-                output.write("\n")
+                if col < col_count:
+                    output.write("\n")
 
-        if row < row_count:
-            output.write('"')
-
-        output.close()
+            if row < row_count:
+                output.write('"')
 
     else:
         count = element.GetNumChildren()
@@ -80,11 +78,11 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-for i in range(0, doc.GetNumPages()):
+for i in range(doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
@@ -108,3 +106,5 @@ for i in range(0, doc.GetNumPages()):
 
 print(f"{tableIndex - 1} tables found")
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

@@ -41,4 +41,5 @@ bytes = bytearray(stream_to_data(mem_stm))
 print(json.dumps(bytes.decode("utf-8"), indent=2))
 mem_stm.Destroy()
 
+# Destroy() after license demo: release SDK resources while the process may continue.
 pdfix.Destroy()

@@ -8,14 +8,14 @@
 
 from pdfixsdk import *
 
-from Utils import inputPath, jsonToRawData, outputPath
+from Utils import input_path, jsonToRawData, output_path
 
 # initialize pdfix and open document
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -68,7 +68,9 @@ memStm.Destroy()
 if not command.Run():
     raise RuntimeError(f"Unable to run command: {pdfix.GetError()}")
 
-if not doc.Save(f"{outputPath}/DeleteTags.pdf", kSaveFull):
+if not doc.Save(output_path / "DeleteTags.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

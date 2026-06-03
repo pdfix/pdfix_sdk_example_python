@@ -5,7 +5,7 @@ import json
 
 from pdfixsdk import *
 
-from Utils import bytearray_to_data, inputPath, outputPath
+from Utils import bytearray_to_data, input_path, output_path
 
 cmd = {
     "commands": [
@@ -43,13 +43,13 @@ cmd = {
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # prepare the command data
 cmdData = json.dumps(cmd).encode()
-with open(f"{outputPath}/TagAs.json", "w") as f:
+with open(output_path / "TagAs.json", "w", encoding="utf-8") as f:
     f.write(json.dumps(cmd, indent=2))
 
 data = bytearray_to_data(bytearray(json.dumps(cmd).encode()))
@@ -72,6 +72,8 @@ if not command.Run():
 
 # cleanup
 memStm.Destroy()
-if not doc.Save(f"{outputPath}/TagAs.pdf", kSaveFull):
+if not doc.Save(output_path / "TagAs.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

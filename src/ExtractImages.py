@@ -3,11 +3,11 @@
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 
 def SaveImage(pdfix, page, element):
-    global imageIndex, outputPath
+    global imageIndex, output_path
     elem_type = element.GetType()
     if elem_type == kPdeImage:
         image = PdeImage(element.obj)
@@ -40,7 +40,7 @@ def SaveImage(pdfix, page, element):
             raise RuntimeError(pdfix.GetError())
 
         # save image to file
-        path = f"{outputPath}/ExtractImages_{imageIndex}.png"
+        path = output_path / "ExtractImages_{imageIndex}.png"
 
         imageParams = PdfImageParams()
         psImage.SaveRect(path, imageParams, devRect)
@@ -64,12 +64,12 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # iterate pages to search for images
-for i in range(0, doc.GetNumPages()):
+for i in range(doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
@@ -93,3 +93,5 @@ for i in range(0, doc.GetNumPages()):
 
 print(str(imageIndex - 1) + " images found")
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

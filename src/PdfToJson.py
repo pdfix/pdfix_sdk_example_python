@@ -4,15 +4,14 @@ import ctypes
 
 from pdfixsdk import *
 
-# import utils to load required shared libraries
-from Utils import inputPath
+from Utils import input_path
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
 # open tagged PDF
-doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -49,3 +48,5 @@ print(data.decode("utf-8"))
 # cleanup
 memStm.Destroy()
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

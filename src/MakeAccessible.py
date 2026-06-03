@@ -5,9 +5,9 @@ import json
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath, stream_to_data
+from Utils import input_path, output_path, stream_to_data
 
-commandPath = ""  # f"{inputPath}/make-accessible.json"
+commandPath = ""  # input_path / "make-accessible.json"
 
 
 def extract_json_name(json_text):
@@ -27,7 +27,7 @@ if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
 print("OpenDoc...", flush=True)
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -89,7 +89,7 @@ try:
         raise RuntimeError(pdfix.GetError())
 
     print("Save...", flush=True)
-    if not doc.Save(f"{outputPath}/MakeAccessible.pdf", kSaveFull):
+    if not doc.Save(output_path / "MakeAccessible.pdf", kSaveFull):
         raise RuntimeError(pdfix.GetError())
 except Exception as e:
     print(f"ERROR: {e}", flush=True)
@@ -99,3 +99,5 @@ finally:
     if cmdStm is not None:
         cmdStm.Destroy()
     doc.Close()
+    # pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+    # keeps running but must release PDFix (see Initialization.py, License.py).

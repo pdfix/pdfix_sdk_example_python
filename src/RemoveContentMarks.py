@@ -6,13 +6,12 @@
 # Installation:
 # pip install pdfix-sdk
 
-# import utils to load required shared libraries
 from pdfixsdk import *
 
-from Utils import inputPath, jsonToRawData, outputPath
+from Utils import input_path, jsonToRawData, output_path
 
-inputPdf = f"{inputPath}/tagged.pdf"
-outputPdf = f"{outputPath}/RemoveContentMarks.pdf"
+inputPdf = input_path / "tagged.pdf"
+outputPdf = output_path / "RemoveContentMarks.pdf"
 
 # initialize pdfix and open document
 pdfix = GetPdfix()
@@ -61,3 +60,5 @@ if not doc.Save(outputPdf, kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

@@ -1,20 +1,28 @@
 # AddWatermark.py
 # Example how to extract text from PDF.
 
-# import utils to load required shared libraries
 from pdfixsdk import *
 
-from Utils import *
+from Utils import (
+    PdfMatrix,
+    PdfMatrixConcat,
+    PdfMatrixInverse,
+    PdfMatrixRotate,
+    PdfMatrixTranslate,
+    input_path,
+    kPi,
+    output_path,
+)
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-img_stm = pdfix.CreateFileStream(f"{inputPath}/watermark.png", kPsReadOnly)
+img_stm = pdfix.CreateFileStream(input_path / "watermark.png", kPsReadOnly)
 if img_stm is None:
     raise RuntimeError(pdfix.GetError())
 
@@ -103,7 +111,9 @@ for i in range(page_num):
     page.SetContent()
     page.Release()
 
-if not doc.Save(f"{outputPath}/AddWatermark.pdf", kSaveFull):
+if not doc.Save(output_path / "AddWatermark.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

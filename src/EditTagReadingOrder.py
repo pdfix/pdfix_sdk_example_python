@@ -3,7 +3,7 @@
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 
 # process structure elements recursively
@@ -23,9 +23,9 @@ def process_struct_elem(elem: PdsStructElement, tag_type: str, return_parent: bo
                     [elem, i] if return_parent else child_elem
                 )  # return [parent_tag, index] or tag
 
-        ret = process_struct_elem(child_elem, tag_type, return_parent)
-        if ret:
-            return ret
+            ret = process_struct_elem(child_elem, tag_type, return_parent)
+            if ret:
+                return ret
     return None
 
 
@@ -41,7 +41,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -63,7 +63,9 @@ if p_tag_parent is None:
 # move found P tag as the first element under Document tag
 p_tag_parent.MoveChild(p_tag_index, document_tag, 0)
 
-if not doc.Save(f"{outputPath}/EditTagReadingOrder.pdf", kSaveFull):
+if not doc.Save(output_path / "EditTagReadingOrder.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

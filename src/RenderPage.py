@@ -1,16 +1,15 @@
 # RenderPage.py
 # Copyright (c) 2018 PDFix. All Rights Reserved.
 
-# import utils to load required shared libraries
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -39,7 +38,7 @@ if not page.DrawContent(renderParams):
     raise RuntimeError(f"Unable to draw page content: {pdfix.GetError()}")
 
 # save image to file
-stm = pdfix.CreateFileStream(f"{outputPath}/RenderPage.jpg", kPsTruncate)
+stm = pdfix.CreateFileStream(output_path / "RenderPage.jpg", kPsTruncate)
 if stm is None:
     raise RuntimeError(f"Unable to create file stream: {pdfix.GetError()}")
 
@@ -55,3 +54,5 @@ image.Destroy()
 pageView.Release()
 page.Release()
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

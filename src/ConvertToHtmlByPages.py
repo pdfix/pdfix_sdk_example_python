@@ -1,18 +1,17 @@
 # ConvertToHtmlByPages.py
 # Example how to convert PDF to HTML.
 
-# import utils to load required shared libraries
 import ctypes
 
 from pdfixsdk import *
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+doc = pdfix.OpenDoc(input_path / "test.pdf", "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -31,7 +30,7 @@ htmlParams.flags = (
 if not htmlConv.SetParams(htmlParams):
     raise RuntimeError(f"Unable to set HTML conversion parameters: {pdfix.GetError()}")
 
-docStm = pdfix.CreateFileStream(f"{outputPath}/page_1.html", kPsTruncate)
+docStm = pdfix.CreateFileStream(output_path / "page_1.html", kPsTruncate)
 if not docStm:
     raise RuntimeError(f"Unable to create HTML output file: {pdfix.GetError()}")
 
@@ -56,7 +55,7 @@ raw_third = (ctypes.c_ubyte * len(third)).from_buffer_copy(third)
 docStm.Write(docStm.GetSize(), raw_third, len(raw_third))
 
 # save the main document node and one page
-for i in range(0, doc.GetNumPages()):
+for i in range(doc.GetNumPages()):
     if not htmlConv.AddPage(i):
         raise RuntimeError(f"Unable to add HTML page: {pdfix.GetError()}")
     break
@@ -74,3 +73,5 @@ docStm.Write(docStm.GetSize(), raw_last, len(raw_last))
 docStm.Destroy()
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

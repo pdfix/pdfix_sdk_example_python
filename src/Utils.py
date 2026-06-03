@@ -4,17 +4,14 @@
 import ctypes
 import json
 import math
-import os
+from pathlib import Path
 
 from pdfixsdk import *
 
-# load pdfix library from the current folder
-basePath = os.path.dirname(os.path.abspath(__file__))
-
-inputPath = f"{basePath}/../resources"
-outputPath = f"{basePath}/../output"
-if not os.path.isdir(outputPath):
-    os.mkdir(outputPath)
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+input_path = PROJECT_DIR.joinpath("resources")
+output_path = PROJECT_DIR.joinpath("output")
+output_path.mkdir(parents=True, exist_ok=True)
 
 kPi = 3.1415926535897932384626433832795
 
@@ -70,7 +67,6 @@ def PdfMatrixInverse(orig: PdfMatrix):
     return inverse
 
 
-# return raw data from stream object
 def stream_to_data(stm):
     size = stm.GetSize()
     raw_data = (ctypes.c_ubyte * size)()
@@ -83,7 +79,6 @@ def bytearray_to_data(byte_array):
     return (ctypes.c_ubyte * size).from_buffer(byte_array)
 
 
-# function to convert json dictionary to c_ubyte array
 def jsonToRawData(json_dict):
     json_str = json.dumps(json_dict)
     json_data = bytearray(json_str.encode("utf-8"))
