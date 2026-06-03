@@ -9,17 +9,17 @@ from pdfixsdk import *
 print("Loading Utils...", flush=True)
 import Utils
 
-commandPath = ""  # inputPath + "/make-accessible.json"
+commandPath = ""  # f"{inputPath}/make-accessible.json"
 
 print("GetPdfix...", flush=True)
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError("Pdfix Initialization fail")
+    raise RuntimeError("Pdfix initialization failed")
 
 print("OpenDoc...", flush=True)
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError("Unable to open pdf : " + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 print("GetCommand...", flush=True)
 command = doc.GetCommand()
@@ -89,7 +89,7 @@ try:
         raise RuntimeError(pdfix.GetError())
 
     print("Save...", flush=True)
-    if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):
+    if not doc.Save(f"{outputPath}/MakeAccessible.pdf", kSaveFull):
         raise RuntimeError(pdfix.GetError())
 except Exception as e:
     print(f"ERROR: {e}", flush=True)

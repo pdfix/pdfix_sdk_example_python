@@ -9,15 +9,15 @@ from Utils import inputPath, outputPath
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
 
 cropBox = page.GetCropBox()
 
@@ -37,7 +37,7 @@ annot.SetContents("This is my comment.")
 annot.AddReply("Mark Fish", "This is some reply.")
 page.Release()
 
-if not doc.Save(outputPath + "/AddComment.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/AddComment.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

@@ -6,7 +6,7 @@ import json
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
 # STANDARD LICENSE (ACTIVATION)
 # activation of the license using activation key

@@ -10,17 +10,17 @@
 from Utils import inputPath, outputPath, jsonToRawData
 from pdfixsdk import *
 
-inputPdf = inputPath + "/tagged.pdf"
-outputPdf = outputPath + "/ArtifactUntagged.pdf"
+inputPdf = f"{inputPath}/tagged.pdf"
+outputPdf = f"{outputPath}/ArtifactUntagged.pdf"
 
 # initialize pdfix and open document
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError("Pdfix Initialization fail")
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(inputPdf, "")
 if doc is None:
-    raise RuntimeError("Failed to open pdf : " + str(pdfix.GetError()))
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # delete_tags command params
 json_dict = {
@@ -72,7 +72,7 @@ memStm.Destroy()
 
 # execute command
 if not command.Run():
-    raise RuntimeError("Failed to run commend: " + pdfix.GetError())
+    raise RuntimeError(f"Unable to run command: {pdfix.GetError()}")
 
 if not doc.Save(outputPdf, kSaveFull):
     raise RuntimeError(pdfix.GetError())

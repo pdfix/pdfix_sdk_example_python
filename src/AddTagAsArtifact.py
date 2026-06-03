@@ -29,14 +29,14 @@ def RemoveParagraph(struct_elem:PdsStructElement):
             if kid_type == "P":
                 for j in range(kid_elem.GetNumChildren()-1, -1):
                     if not kid_elem.RemoveChild(j):
-                        raise RuntimeError()
+                        raise RuntimeError(f'PDFix error: {pdfix.GetError()}')
             elif kid_type == "Figure":
                 # remove figure if does not contain an alt text
                 alt_len = kid_elem.GetAlt(None, 0)
                 if alt_len == 0:
                     for j in range(kid_elem.GetNumChildren()-1, -1):
                         if not kid_elem.RemoveChild(j):
-                            raise RuntimeError()
+                            raise RuntimeError(f'PDFix error: {pdfix.GetError()}')
             else:
                 RemoveParagraph(kid_elem)
             # remove this element if it has no kids
@@ -50,11 +50,11 @@ def RemoveParagraph(struct_elem:PdsStructElement):
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 # cleanup any previous structure tree
 if not doc.RemoveTags():
@@ -68,7 +68,7 @@ if not doc.AddTags(tagsParams):
 # get the struct tree
 struct_tree = doc.GetStructTree()
 if struct_tree is None:
-    raise RuntimeError()
+    raise RuntimeError(f'PDFix error: {pdfix.GetError()}')
 
 # tag text on the bottom of the page as artifact
 for i in range(struct_tree.GetNumChildren()):
@@ -80,13 +80,13 @@ for i in range(struct_tree.GetNumChildren()):
 for i in range(doc.GetNumPages()):
     page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
 
     MarkUntaggedObjectsAsArtifact(page)
     page.Release()
 
 # save document
-if not doc.Save(outputPath + "/AddTagAsArtifact.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/AddTagAsArtifact.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

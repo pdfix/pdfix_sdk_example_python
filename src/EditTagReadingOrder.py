@@ -6,7 +6,7 @@ from pdfixsdk import *
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
 # process structure elements recursively 
 # function returns parent of the found tag and its index within the parent
@@ -35,13 +35,13 @@ def find_tag(struct_tree, tag_type, return_parent):
   root_elem = struct_tree.GetStructElementFromObject(struct_tree.GetObject())
   return process_struct_elem(root_elem, tag_type, return_parent)
 
-doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 struct_tree = doc.GetStructTree()
 if struct_tree is None:
-    raise RuntimeError('Unable to get struct tree : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to get structure tree: {pdfix.GetError()}')
 
 document_tag = find_tag(struct_tree, "Document", False)         # find Document tag
 if document_tag is None:
@@ -55,7 +55,7 @@ if p_tag_parent is None:
 # move found P tag as the first element under Document tag
 p_tag_parent.MoveChild(p_tag_index, document_tag, 0)
 
-if not doc.Save(outputPath + "/EditTagReadingOrder.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/EditTagReadingOrder.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

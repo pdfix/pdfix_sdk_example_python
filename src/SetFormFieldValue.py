@@ -7,11 +7,11 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 field = doc.GetFormFieldByName("Text1")
 if field is not None:
@@ -19,7 +19,7 @@ if field is not None:
     value = "New Value"
     field.SetValue(value)
 
-if not doc.Save(outputPath + "/SetFormFieldValue.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/SetFormFieldValue.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

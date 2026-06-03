@@ -7,7 +7,7 @@ import uuid
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
 def process_struct_elem(elem: PdsStructElement):
   # read tag properties 
@@ -41,20 +41,20 @@ def process_struct_elem(elem: PdsStructElement):
       pass
 
 
-doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 struct_tree = doc.GetStructTree()
 if struct_tree is None:
-    raise RuntimeError('Unable to get struct tree : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to get structure tree: {pdfix.GetError()}')
 
 for i in range(struct_tree.GetNumChildren()):
   obj = struct_tree.GetChildObject(i)
   elem = struct_tree.GetStructElementFromObject(obj)
   process_struct_elem(elem)
 
-if not doc.Save(outputPath + "/EditTagProperties.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/EditTagProperties.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

@@ -7,11 +7,11 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 imageIndex = 1
 def SaveImage(pdfix, page, element):
@@ -46,7 +46,7 @@ def SaveImage(pdfix, page, element):
             raise RuntimeError(pdfix.GetError())
 
         # save image to file
-        path = outputPath + "/ExtractImages_" + str(imageIndex) + ".png"
+        path = f"{outputPath}/ExtractImages_{imageIndex}.png"
 
         imageParams = PdfImageParams()
         psImage.SaveRect(path, imageParams, devRect)
@@ -68,19 +68,19 @@ for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError('Acquire Page fail : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
     
     # get the page map of the current page
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
-        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
     if not pageMap.CreateElements():
-        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
     
     # get page container
     container = pageMap.GetElement()    
     if container is None:
-        raise RuntimeError('Get page element failure : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to get page element: {pdfix.GetError()}')
     
     SaveImage(pdfix, page, container)
     pageMap.Release()

@@ -9,8 +9,8 @@ from pdfixsdk import *
 # load pdfix library from the current folder
 basePath = os.path.dirname(os.path.abspath(__file__))
 
-inputPath = basePath + "/../resources"
-outputPath = basePath + "/../output"
+inputPath = f"{basePath}/../resources"
+outputPath = f"{basePath}/../output"
 if not os.path.isdir(outputPath): 
   os.mkdir(outputPath)
 

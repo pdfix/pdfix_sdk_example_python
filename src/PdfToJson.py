@@ -8,12 +8,12 @@ from Utils import inputPath, outputPath
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
 # open tagged PDF
-doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 # prepare PDF to JSON conversion params
 params = PdfJsonParams()
@@ -22,10 +22,10 @@ params.flags = (kJsonExportStructTree | kJsonExportDocInfo | kJsonExportBBox | k
 # prepare PDF to JSON conversion
 jsonConv = doc.CreateJsonConversion()
 if jsonConv is None:
-    raise RuntimeError('Unable to create json conversion : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to create JSON conversion: {pdfix.GetError()}')
 
 if not jsonConv.SetParams(params):
-    raise RuntimeError('Unable to set json conversion params : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to set JSON conversion parameters: {pdfix.GetError()}')
 
 # extract data to stream
 memStm = pdfix.CreateMemStream()
@@ -33,7 +33,7 @@ if memStm is None:
     raise RuntimeError(pdfix.GetError())
 
 if not jsonConv.SaveToStream(memStm):
-    raise RuntimeError('Unable to save json to stream : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to save JSON to stream: {pdfix.GetError()}')
 
 # read memmory stream into bytearray
 sz = memStm.GetSize()

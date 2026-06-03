@@ -7,11 +7,11 @@ from pdfixsdk import *
 
 pdfix  = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 def GetText (element, output):
     elemType = element.GetType()
@@ -30,25 +30,25 @@ def GetText (element, output):
                 GetText(child, output)
             
 # prepare the output file
-output = open(outputPath + "/ExtractText.txt", "w")
+output = open(f"{outputPath}/ExtractText.txt", "w")
 
 for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError('Acquire Page fail : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
 
     # get the page map of the current page
     pageMap = page.AcquirePageMap()    
     if pageMap is None:
-        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
     if not pageMap.CreateElements():
-        raise RuntimeError('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
 
     # get page container
     container = pageMap.GetElement()
     if container is None:
-        raise RuntimeError('Get page element failure : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to get page element: {pdfix.GetError()}')
     GetText(container, output)
 
     pageMap.Release()

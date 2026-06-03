@@ -40,14 +40,14 @@ cmd = {
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+    raise RuntimeError('Pdfix initialization failed')
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 # prepare the command data
 cmdData = json.dumps(cmd).encode()
-with open(outputPath + "/TagAs.json", "w") as f:
+with open(f"{outputPath}/TagAs.json", "w") as f:
     f.write(json.dumps(cmd, indent=2))
 
 data = bytearray_to_data(bytearray(json.dumps(cmd).encode()))
@@ -70,6 +70,6 @@ if not command.Run():
 
 # cleanup
 memStm.Destroy()
-if not doc.Save(outputPath + "/TagAs.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/TagAs.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 doc.Close()

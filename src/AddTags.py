@@ -6,16 +6,16 @@ from pdfixsdk import *
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix Initialization fail')
+    raise RuntimeError('Pdfix initialization failed')
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
 # load template configuration from JSON file
 tmpl = doc.GetTemplate()
 if not tmpl:
-    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f'Unable to get document template: {pdfix.GetError()}')
 
 preflight = True
 if preflight:
@@ -38,12 +38,12 @@ if preflight:
 
 else:
     # load the template from a pre-created JSON
-    tmplStm = pdfix.CreateFileStream(inputPath + "/template.json", kPsReadOnly)
+    tmplStm = pdfix.CreateFileStream(f"{inputPath}/template.json", kPsReadOnly)
     if tmplStm is None:
         raise RuntimeError(pdfix.GetError())
 
     if not tmpl.LoadFromStream(tmplStm, kDataFormatJson):
-        raise RuntimeError('Unable to load template : ' + pdfix.GetError())
+        raise RuntimeError(f'Unable to load template: {pdfix.GetError()}')
 
     tmplStm.Destroy()
 
@@ -51,7 +51,7 @@ tagsParams = PdfTagsParams()
 if not doc.AddTags(tagsParams):
     raise RuntimeError(pdfix.GetError())
 
-if not doc.Save(outputPath + "/AddTags.pdf", kSaveFull):
+if not doc.Save(f"{outputPath}/AddTags.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
