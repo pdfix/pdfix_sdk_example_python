@@ -30,6 +30,9 @@ if not pdfix.GetAccountAuthorization().Authorize("YOUR LICENSE NAME", "YOUR LICE
 # LICESNE STATUS
 # read the license status
 mem_stm = pdfix.CreateMemStream()
+if mem_stm is None:
+    raise RuntimeError(pdfix.GetError())
+
 pdfix.GetStandardAuthorization().SaveToStream(mem_stm, kDataFormatJson)
 bytes = bytearray(stream_to_data(mem_stm))
 print(json.dumps(bytes.decode("utf-8"), indent=2))

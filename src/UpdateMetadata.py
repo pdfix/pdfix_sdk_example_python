@@ -24,6 +24,9 @@ doc.SetInfo("Creator", creator[::-1])
 
 # read/write document XMP metadata
 meta_stm_obj = doc.GetMetadata()
+if meta_stm_obj is None:
+    raise RuntimeError('Unable to read document metadata : ' + pdfix.GetError())
+
 byte_array = bytearray(stream_to_data(meta_stm_obj))
 
 # load/modify XMP metadata 
@@ -33,7 +36,13 @@ byte_array.extend(bytearray(b'<modified></modified>'))
 size = len(byte_array)
 raw_data = bytearray_to_data(byte_array)
 meta_stm_dict = meta_stm_obj.GetStreamDict().Clone(False)
+if meta_stm_dict is None:
+    raise RuntimeError(pdfix.GetError())
+
 meta_stm_obj = doc.CreateStreamObject(True, meta_stm_dict, raw_data, size)
+if meta_stm_obj is None:
+    raise RuntimeError(pdfix.GetError())
+
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
 if not doc.Save(outputPath + "/UpdateMetadata.pdf", kSaveFull):

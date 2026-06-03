@@ -47,10 +47,18 @@ json_dict = {
 # prepare the command
 json_data, json_size = jsonToRawData(json_dict)
 memStm = pdfix.CreateMemStream()
+if memStm is None:
+    raise RuntimeError(pdfix.GetError())
+
 memStm.Write(0, json_data, json_size)
 
 command = doc.GetCommand()
-command.LoadParamsFromStream(memStm, kDataFormatJson)
+if command is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not command.LoadParamsFromStream(memStm, kDataFormatJson):
+    raise RuntimeError(pdfix.GetError())
+
 memStm.Destroy()
 
 # execute command

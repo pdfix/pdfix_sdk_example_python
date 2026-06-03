@@ -14,6 +14,8 @@ if doc is None:
     raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 page = doc.AcquirePage(0)
+if page is None:
+    raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
 
 # define link annotation bounding box
 bbox = PdfRect()
@@ -24,7 +26,9 @@ bbox.top = bbox.bottom + 200
 
 # create Link annotation
 annot = page.CreateAnnot(kAnnotLink, bbox)
-page.AddAnnot(-1, annot)          
+if annot is None:
+    raise RuntimeError(pdfix.GetError())
+page.AddAnnot(-1, annot)
 link = PdfLinkAnnot(annot.obj)
 
 # set annotation border style (invisible)
@@ -36,6 +40,8 @@ border_dict.PutNumber("W", 0)
 
 # create link action (URI)
 action = doc.CreateAction(kActionURI)
+if action is None:
+    raise RuntimeError(pdfix.GetError())
 action_dict = PdsDictionary(action.GetObject().obj)
 action_dict.PutString("URI", "www.pdfix.net")
 link.SetAction(action)
@@ -64,6 +70,9 @@ struct_elem_objr.Put("Obj", annot_dict)                 # Object reference
 struct_elem_objr.Put("P", struct_elem_link_obj)         # Parent object reference
 struct_elem_objr.PutName("Type", "OBJR")                # Type OBJR
 
+page.Release()
 
-doc.Save(outputPath + "/TagLink.pdf", kSaveFull)
+if not doc.Save(outputPath + "/TagLink.pdf", kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
 doc.Close()

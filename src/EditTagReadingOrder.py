@@ -40,12 +40,22 @@ if doc is None:
     raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 struct_tree = doc.GetStructTree()
+if struct_tree is None:
+    raise RuntimeError('Unable to get struct tree : ' + pdfix.GetError())
+
 document_tag = find_tag(struct_tree, "Document", False)         # find Document tag
+if document_tag is None:
+    raise RuntimeError('Document tag not found')
+
 p_tag_parent, p_tag_index = find_tag(struct_tree, "P", True)    # find parent of first P tag and index within parent
+if p_tag_parent is None:
+    raise RuntimeError('P tag not found')
 
 
 # move found P tag as the first element under Document tag
 p_tag_parent.MoveChild(p_tag_index, document_tag, 0)
 
-doc.Save(outputPath + "/EditTagReadingOrder.pdf", kSaveFull)
+if not doc.Save(outputPath + "/EditTagReadingOrder.pdf", kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
 doc.Close()

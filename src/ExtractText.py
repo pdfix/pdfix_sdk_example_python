@@ -50,6 +50,9 @@ for i in range(0, doc.GetNumPages()):
     if container is None:
         raise RuntimeError('Get page element failure : ' + pdfix.GetError())
     GetText(container, output)
- 
+
+    pageMap.Release()
+    page.Release()
+
 output.close()    
 doc.Close()

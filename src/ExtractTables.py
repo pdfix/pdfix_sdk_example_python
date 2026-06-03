@@ -83,7 +83,7 @@ for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)    
     if page is None:
-        raise RuntimeError('Acquire Page fail : ' + pdfix.GetErrorType())
+        raise RuntimeError('Acquire Page fail : ' + pdfix.GetError())
     
     # get the page map of the current page
     pageMap = page.AcquirePageMap()    
@@ -95,9 +95,10 @@ for i in range(0, doc.GetNumPages()):
     # get page container
     container = pageMap.GetElement()
     if container is None:
-        raise RuntimeError('Get page element failure : ' + pdfix.GetErrorType())
+        raise RuntimeError('Get page element failure : ' + pdfix.GetError())
     
     SaveTable(container)
+    pageMap.Release()
     page.Release()
 
 print(str(tableIndex - 1) + " tables found")

@@ -53,15 +53,23 @@ with open(outputPath + "/TagAs.json", "w") as f:
 data = bytearray_to_data(bytearray(json.dumps(cmd).encode()))
 
 memStm = pdfix.CreateMemStream()
+if memStm is None:
+    raise RuntimeError(pdfix.GetError())
 memStm.Write(0, data, len(data))
 
 command = doc.GetCommand()
-command.LoadParamsFromStream(memStm, kDataFormatJson)
+if command is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not command.LoadParamsFromStream(memStm, kDataFormatJson):
+    raise RuntimeError(pdfix.GetError())
 
 # run the command
-command.Run()
+if not command.Run():
+    raise RuntimeError(pdfix.GetError())
 
 # cleanup
 memStm.Destroy()
-doc.Save(outputPath + "/TagAs.pdf", kSaveFull)
+if not doc.Save(outputPath + "/TagAs.pdf", kSaveFull):
+    raise RuntimeError(pdfix.GetError())
 doc.Close()

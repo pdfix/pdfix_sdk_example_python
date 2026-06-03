@@ -46,10 +46,15 @@ if doc is None:
     raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 struct_tree = doc.GetStructTree()
+if struct_tree is None:
+    raise RuntimeError('Unable to get struct tree : ' + pdfix.GetError())
+
 for i in range(struct_tree.GetNumChildren()):
   obj = struct_tree.GetChildObject(i)
   elem = struct_tree.GetStructElementFromObject(obj)
   process_struct_elem(elem)
 
-doc.Save(outputPath + "/EditTagProperties.pdf", kSaveFull)
+if not doc.Save(outputPath + "/EditTagProperties.pdf", kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
 doc.Close()

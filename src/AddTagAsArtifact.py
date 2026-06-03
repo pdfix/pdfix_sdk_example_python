@@ -79,6 +79,9 @@ for i in range(struct_tree.GetNumChildren()):
 # the struct tree was updates, save page content on each page to apply changes
 for i in range(doc.GetNumPages()):
     page = doc.AcquirePage(i)
+    if page is None:
+        raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
+
     MarkUntaggedObjectsAsArtifact(page)
     page.Release()
 

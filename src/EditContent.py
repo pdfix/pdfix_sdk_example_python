@@ -11,7 +11,13 @@ def addText(page: PdfPage):
     matrix.f = cropBox.bottom + 10
 
     sys_font = pdfix.FindSysFont("Arial", kFontForceBold, kFontDefANSICodepage)
+    if sys_font is None:
+        raise RuntimeError(pdfix.GetError())
+
     font = doc.CreateFont(sys_font, kFontAnsiCharset, 0)
+    if font is None:
+        raise RuntimeError(pdfix.GetError())
+
     sys_font.Destroy()
 
     content = page.GetContent()

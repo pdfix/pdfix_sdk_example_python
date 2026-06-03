@@ -14,6 +14,9 @@ if doc is None:
 
 # load first page cotnent and the first page object
 page = doc.AcquirePage(0)
+if page is None:
+    raise RuntimeError('Unable to acquire page : ' + pdfix.GetError())
+
 content = page.GetContent()
 pageObject = content.GetObject(0)
 
@@ -32,5 +35,7 @@ contentMark.SetTagObject(tagMcid, tagDict, False)
 page.Release()
 
 # save and close document
-doc.Save(outputPath + "/PageObjectMCID.pdf", kSaveFull)
+if not doc.Save(outputPath + "/PageObjectMCID.pdf", kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
 doc.Close()

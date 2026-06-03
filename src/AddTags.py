@@ -29,6 +29,9 @@ if preflight:
 
     # to save generated template into a JSON
     memStm = pdfix.CreateMemStream()
+    if memStm is None:
+        raise RuntimeError(pdfix.GetError())
+
     tmpl.SaveToStream(memStm, kDataFormatJson, kSaveFull)
     templateBytes = bytearray(stream_to_data(memStm))
     memStm.Destroy()
@@ -36,8 +39,13 @@ if preflight:
 else:
     # load the template from a pre-created JSON
     tmplStm = pdfix.CreateFileStream(inputPath + "/template.json", kPsReadOnly)
+    if tmplStm is None:
+        raise RuntimeError(pdfix.GetError())
+
     if not tmpl.LoadFromStream(tmplStm, kDataFormatJson):
-        raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+        raise RuntimeError('Unable to load template : ' + pdfix.GetError())
+
+    tmplStm.Destroy()
 
 tagsParams = PdfTagsParams()
 if not doc.AddTags(tagsParams):

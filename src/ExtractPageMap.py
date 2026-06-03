@@ -19,13 +19,19 @@ if doc_template is None:
     raise RuntimeError(pdfix.GetError())
 
 confstm = pdfix.CreateFileStream(inputPath + "/config.json", kPsReadOnly)
-if (confstm):
-    if doc_template.LoadFromStream(confstm, kDataFormatJson) is False:
-        raise RuntimeError(pdfix.GetError())
-    confstm.Destroy()
+if confstm is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not doc_template.LoadFromStream(confstm, kDataFormatJson):
+    raise RuntimeError(pdfix.GetError())
+
+confstm.Destroy()
 
 def ImageToBase64(image: PsImage) -> str:
     stm = pdfix.CreateMemStream()
+    if stm is None:
+        raise RuntimeError(pdfix.GetError())
+
     imageParams = PdfImageParams()
     if not image.SaveToStream(stm, imageParams):
         raise RuntimeError(pdfix.GetError())
@@ -45,9 +51,15 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
 
     # size of the image
     pageView = page.AcquirePageView(1, kRotate0)
+    if pageView is None:
+        raise RuntimeError(pdfix.GetError())
+
     rect = pageView.RectToDevice(elem.GetBBox())
     renderParams.image = pdfix.CreateImage(rect.right - rect.left, rect.bottom - rect.top,
         kImageDIBFormatArgb)
+    if renderParams.image is None:
+        raise RuntimeError(pdfix.GetError())
+
     renderParams.matrix = pageView.GetDeviceMatrix()
     pageView.Release()
 

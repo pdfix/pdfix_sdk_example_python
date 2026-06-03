@@ -22,6 +22,9 @@ def SaveImage(pdfix, page, element):
         bbox = image.GetBBox()
 
         pageView = page.AcquirePageView(2.0, kRotate0)
+        if pageView is None:
+            raise RuntimeError(pdfix.GetError())
+
         devRect = pageView.RectToDevice(bbox)
 
         # move dev rect to 0,0 - content will be drawn to the top-left corner
@@ -31,12 +34,16 @@ def SaveImage(pdfix, page, element):
         devRect.top = 0
 
         # prepare image 
-        psImage = pdfix.CreateImage(pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb)        
+        psImage = pdfix.CreateImage(pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb)
+        if psImage is None:
+            raise RuntimeError(pdfix.GetError())
+
         renderParams = PdfPageRenderParams()
         renderParams.clip_box = bbox
         renderParams.image = psImage
         renderParams.matrix = pageView.GetDeviceMatrix()
-        page.DrawContent(renderParams)
+        if not page.DrawContent(renderParams):
+            raise RuntimeError(pdfix.GetError())
 
         # save image to file
         path = outputPath + "/ExtractImages_" + str(imageIndex) + ".png"
@@ -44,6 +51,7 @@ def SaveImage(pdfix, page, element):
         imageParams = PdfImageParams()
         psImage.SaveRect(path, imageParams, devRect)
         psImage.Destroy()
+        pageView.Release()
 
         imageIndex += 1        
     else:
@@ -75,6 +83,7 @@ for i in range(0, doc.GetNumPages()):
         raise RuntimeError('Get page element failure : ' + pdfix.GetError())
     
     SaveImage(pdfix, page, container)
+    pageMap.Release()
     page.Release()
 
 print(str(imageIndex - 1) + " images found")

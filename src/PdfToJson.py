@@ -21,11 +21,19 @@ params.flags = (kJsonExportStructTree | kJsonExportDocInfo | kJsonExportBBox | k
 
 # prepare PDF to JSON conversion
 jsonConv = doc.CreateJsonConversion()
-jsonConv.SetParams(params)
+if jsonConv is None:
+    raise RuntimeError('Unable to create json conversion : ' + pdfix.GetError())
+
+if not jsonConv.SetParams(params):
+    raise RuntimeError('Unable to set json conversion params : ' + pdfix.GetError())
 
 # extract data to stream
 memStm = pdfix.CreateMemStream()
-jsonConv.SaveToStream(memStm)
+if memStm is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not jsonConv.SaveToStream(memStm):
+    raise RuntimeError('Unable to save json to stream : ' + pdfix.GetError())
 
 # read memmory stream into bytearray
 sz = memStm.GetSize()
