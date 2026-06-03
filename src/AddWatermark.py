@@ -1,17 +1,18 @@
-# AddWatermark.py 
+# AddWatermark.py
 # Example how to extract text from PDF.
 
 # import utils to load required shared libraries
-from Utils import *
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
+from Utils import *
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 img_stm = pdfix.CreateFileStream(f"{inputPath}/watermark.png", kPsReadOnly)
 if img_stm is None:
@@ -32,7 +33,7 @@ for i in range(page_num):
     content = page.GetContent()
     if content is None:
         raise RuntimeError(pdfix.GetError())
-            
+
     xobjdict = image_obj.GetStreamDict()
     width = xobjdict.GetNumber("Width")
     height = xobjdict.GetNumber("Height")
@@ -58,25 +59,27 @@ for i in range(page_num):
     # rotation
     rotation = 45.0
     if rotation != 0.0:
-        matrix = PdfMatrixTranslate(matrix, -width_scaled / 2, -height_scaled / 2, False)
+        matrix = PdfMatrixTranslate(
+            matrix, -width_scaled / 2, -height_scaled / 2, False
+        )
         matrix = PdfMatrixRotate(matrix, (rotation / 180.0) * kPi, False)
         matrix = PdfMatrixTranslate(matrix, width_scaled / 2, height_scaled / 2, False)
-    
+
     rect_h = crop_rect.right - crop_rect.left
     rect_v = crop_rect.top - crop_rect.bottom
 
     # horizontal align
     h_align = kAlignmentCenter
-    if (h_align == kAlignmentCenter):
+    if h_align == kAlignmentCenter:
         matrix = PdfMatrixTranslate(matrix, (rect_h - width_scaled) / 2, 0.0, False)
-    elif (h_align == kAlignmentRight):
+    elif h_align == kAlignmentRight:
         matrix = PdfMatrixTranslate(matrix, (rect_h - width_scaled), 0.0, False)
 
     # vertical align
     v_align = kAlignmentCenter
-    if (v_align == kAlignmentCenter):
+    if v_align == kAlignmentCenter:
         matrix = PdfMatrixTranslate(matrix, 0.0, (rect_v - height_scaled) / 2, False)
-    elif (v_align == kAlignmentTop):
+    elif v_align == kAlignmentTop:
         matrix = PdfMatrixTranslate(matrix, 0.0, (rect_v - height_scaled), False)
 
     # horizontal and vertical offset
@@ -100,7 +103,7 @@ for i in range(page_num):
     page.SetContent()
     page.Release()
 
-if (not doc.Save(f"{outputPath}/AddWatermark.pdf", kSaveFull)):
+if not doc.Save(f"{outputPath}/AddWatermark.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

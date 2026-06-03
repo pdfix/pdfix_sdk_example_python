@@ -1,21 +1,20 @@
-import os
 from pdfixsdk import *
-from Utils import inputPath, outputPath
 
+from Utils import inputPath, outputPath
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 # open the document
 doc = pdfix.OpenDoc(f"{inputPath}/tagged.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # load first page cotnent and the first page object
 page = doc.AcquirePage(0)
 if page is None:
-    raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 content = page.GetContent()
 pageObject = content.GetObject(0)

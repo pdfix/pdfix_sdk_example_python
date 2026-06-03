@@ -1,15 +1,25 @@
-# import utils to load required shared libraries
-print("START", flush=True)
+# MakeAccessible.py
+# Example how to run the make_accessible batch command.
+
 import json
 
-from Utils import inputPath, outputPath
-print("Loading Pdfix...", flush=True)
 from pdfixsdk import *
 
-print("Loading Utils...", flush=True)
-import Utils
+from Utils import inputPath, outputPath, stream_to_data
 
 commandPath = ""  # f"{inputPath}/make-accessible.json"
+
+
+def extract_json_name(json_text):
+    if not json_text:
+        return None
+
+    try:
+        data = json.loads(json_text)
+        return data.get("name")
+    except Exception:
+        return None
+
 
 print("GetPdfix...", flush=True)
 pdfix = GetPdfix()
@@ -28,18 +38,6 @@ if command is None:
 
 cmdStm = None
 
-
-def extract_json_name(json_text):
-    if not json_text:
-        return None
-
-    try:
-        data = json.loads(json_text)
-        return data.get("name")
-    except Exception:
-        return None
-
-
 try:
     # load the make_accessible command from JSON file
     # or find the embedded custom action named "make_accessible"
@@ -57,7 +55,7 @@ try:
                 ):
                     raise RuntimeError(pdfix.GetError())
 
-                json_text = bytearray(Utils.stream_to_data(tmpStm))
+                json_text = bytearray(stream_to_data(tmpStm))
                 name = extract_json_name(json_text)
 
                 if name == "make_accessible":
@@ -71,7 +69,9 @@ try:
                     tmpStm.Destroy()
 
         if cmdStm is None:
-            raise RuntimeError("Embedded custom action 'make_accessible' was not found.")
+            raise RuntimeError(
+                "Embedded custom action 'make_accessible' was not found."
+            )
     else:
         cmdStm = pdfix.CreateFileStream(commandPath, kPsReadOnly)
         if cmdStm is None:
@@ -93,7 +93,7 @@ try:
         raise RuntimeError(pdfix.GetError())
 except Exception as e:
     print(f"ERROR: {e}", flush=True)
-    raise    
+    raise
 
 finally:
     if cmdStm is not None:

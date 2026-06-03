@@ -1,23 +1,21 @@
 # AddComment.py
 # Example how to add a comment with reply into PDF.
 
-from os import *
 from pdfixsdk import *
 
-# import utils to load required shared libraries
 from Utils import inputPath, outputPath
 
-pdfix  = GetPdfix()
+pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 cropBox = page.GetCropBox()
 

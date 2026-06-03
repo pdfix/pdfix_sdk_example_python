@@ -1,31 +1,14 @@
-# ExtractText.py
-# Example how to extract text from PDF.
+# ExtractPageMap.py
+# Example how to extract page map to JSON.
 
-import json, base64, ctypes
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
+import base64
+import ctypes
+import json
+
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
-if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+from Utils import inputPath
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
-if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
-
-doc_template = doc.GetTemplate();
-if doc_template is None:
-    raise RuntimeError(pdfix.GetError())
-
-confstm = pdfix.CreateFileStream(f"{inputPath}/config.json", kPsReadOnly)
-if confstm is None:
-    raise RuntimeError(pdfix.GetError())
-
-if not doc_template.LoadFromStream(confstm, kDataFormatJson):
-    raise RuntimeError(pdfix.GetError())
-
-confstm.Destroy()
 
 def ImageToBase64(image: PsImage) -> str:
     stm = pdfix.CreateMemStream()
@@ -44,6 +27,7 @@ def ImageToBase64(image: PsImage) -> str:
     imageDataBase64 = base64.b64encode(bytes(rawData)).decode("utf-8")
     return imageDataBase64
 
+
 def ExtractElemToBase64(elem: PdeElement, node: dict):
     page = elem.GetPageMap().GetPage()
     renderParams = PdfPageRenderParams()
@@ -55,8 +39,9 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
         raise RuntimeError(pdfix.GetError())
 
     rect = pageView.RectToDevice(elem.GetBBox())
-    renderParams.image = pdfix.CreateImage(rect.right - rect.left, rect.bottom - rect.top,
-        kImageDIBFormatArgb)
+    renderParams.image = pdfix.CreateImage(
+        rect.right - rect.left, rect.bottom - rect.top, kImageDIBFormatArgb
+    )
     if renderParams.image is None:
         raise RuntimeError(pdfix.GetError())
 
@@ -66,10 +51,11 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
     # draw content to image
     if not page.DrawContent(renderParams):
         raise RuntimeError(pdfix.GetError())
-    
+
     node["imageData"] = ImageToBase64(renderParams.image)
     renderParams.image.Destroy()
-    
+
+
 def ExtractBBox(bbox: PdfRect, node: dict):
     bboxNode = {}
     bboxNode["left"] = bbox.left
@@ -78,9 +64,11 @@ def ExtractBBox(bbox: PdfRect, node: dict):
     bboxNode["bottom"] = bbox.bottom
     node["bbox"] = bboxNode
 
+
 def ExtractColorState(colorState: PdfColorState, node: dict):
     colorStateNode = {}
     node["colorState"] = colorStateNode
+
 
 def ExtractTextState(textState: PdfTextState, node: dict):
     textStateNode = {}
@@ -90,29 +78,31 @@ def ExtractTextState(textState: PdfTextState, node: dict):
     textStateNode["fontSize"] = textState.font_size
     node["textState"] = textStateNode
 
+
 def ExtractTextElement(textElem: PdeText, node: dict):
     textState = textElem.GetTextState()
     ExtractTextState(textState, node)
     node["text"] = textElem.GetText()
     node["style"] = textElem.GetTextStyle()
 
+
 def ExtractImageElement(imageElem: PdeImage, node: dict):
     imageNode = {}
     ExtractElemToBase64(imageElem, imageNode)
     node["imageData"] = imageNode
 
-# general method to extract element of any type
+
 def ExtractPageElement(elem: PdeElement, node: dict):
     elemType = elem.GetType()
-    if kPdeText == elemType:        
+    if kPdeText == elemType:
         node["type"] = "text"
         ExtractTextElement(PdeText(elem.obj), node)
-    elif kPdeImage == elemType:        
+    elif kPdeImage == elemType:
         node["type"] = "image"
         ExtractImageElement(PdeImage(elem.obj), node)
     else:
         node["type"] = f"Unknown {elemType}"
-    
+
     ExtractBBox(elem.GetBBox(), node)
 
     count = elem.GetNumChildren()
@@ -121,11 +111,33 @@ def ExtractPageElement(elem: PdeElement, node: dict):
         for i in range(0, count):
             child = elem.GetChild(i)
             if child is not None:
-                childNode = {} 
+                childNode = {}
                 ExtractPageElement(child, childNode)
                 childList.append(childNode)
         node["kids"] = childList
-            
+
+
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
+
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
+doc_template = doc.GetTemplate()
+if doc_template is None:
+    raise RuntimeError(pdfix.GetError())
+
+confstm = pdfix.CreateFileStream(f"{inputPath}/config.json", kPsReadOnly)
+if confstm is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not doc_template.LoadFromStream(confstm, kDataFormatJson):
+    raise RuntimeError(pdfix.GetError())
+
+confstm.Destroy()
+
 # prepare the output json
 output = {}
 pagesList = []
@@ -136,19 +148,19 @@ for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
     # get the page map of the current page
-    pageMap = page.AcquirePageMap()    
+    pageMap = page.AcquirePageMap()
     if pageMap is None:
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
     if not pageMap.CreateElements():
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
 
     # extract the main page container recursively
     container = pageMap.GetElement()
     if container is None:
-        raise RuntimeError(f'Unable to get page element: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to get page element: {pdfix.GetError()}")
     ExtractPageElement(container, pageNode)
 
     # append all artifacts into the output
@@ -158,13 +170,13 @@ for i in range(0, doc.GetNumPages()):
         ExtractPageElement(pageMap.GetArtifact(j), artifactNode)
         artifactsNode.append(artifactNode)
 
-    pageNode["artifacts"] = artifactsNode        
+    pageNode["artifacts"] = artifactsNode
 
     pagesList.append(pageNode)
     pageMap.Release()
     page.Release()
- 
+
 output["pageMap"] = pagesList
-print(json.dumps(output,indent=2))
+print(json.dumps(output, indent=2))
 
 doc.Close()

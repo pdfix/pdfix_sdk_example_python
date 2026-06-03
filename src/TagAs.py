@@ -1,9 +1,11 @@
 # TagAs.py
 # Example for tagging content in an area on page 1 as Figure
 
-from pdfixsdk import *
 import json
-from Utils import inputPath, outputPath, bytearray_to_data
+
+from pdfixsdk import *
+
+from Utils import bytearray_to_data, inputPath, outputPath
 
 cmd = {
     "commands": [
@@ -40,10 +42,10 @@ cmd = {
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # prepare the command data
 cmdData = json.dumps(cmd).encode()

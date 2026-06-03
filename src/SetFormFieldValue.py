@@ -2,16 +2,17 @@
 # Example how to fill PDF form.
 
 # import utils to load required shared libraries
-from Utils import inputPath, outputPath
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
+from Utils import inputPath, outputPath
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 field = doc.GetFormFieldByName("Text1")
 if field is not None:

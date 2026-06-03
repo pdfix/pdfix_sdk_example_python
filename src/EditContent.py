@@ -3,6 +3,7 @@ from pdfixsdk import *
 # import utils to load required shared libraries
 from Utils import inputPath, outputPath
 
+
 # add text to page
 def addText(page: PdfPage):
     cropBox = page.GetCropBox()
@@ -24,8 +25,9 @@ def addText(page: PdfPage):
     text_obj = content.AddNewText(-1, font, matrix)
     text_obj.SetText("Sample text")
 
+
 # add path to page
-def addPath(page: PdfPage): 
+def addPath(page: PdfPage):
     cropBox = page.GetCropBox()
     matrix = PdfMatrix()
     matrix.e = cropBox.left
@@ -49,20 +51,20 @@ def addPath(page: PdfPage):
 
     path_obj.SetStroke(True)
     path_obj.SetFillType(kFillRuleEvenOdd)
-    
 
-# content editing example 
-pdfix  = GetPdfix()
+
+# content editing example
+pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 # add text to page
 addText(page)
@@ -74,4 +76,3 @@ if not doc.Save(f"{outputPath}/EditContent.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
-

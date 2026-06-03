@@ -7,8 +7,9 @@
 # pip install pdfix-sdk
 
 # import utils to load required shared libraries
-from Utils import inputPath, outputPath, jsonToRawData
 from pdfixsdk import *
+
+from Utils import inputPath, jsonToRawData, outputPath
 
 inputPdf = f"{inputPath}/tagged.pdf"
 outputPdf = f"{outputPath}/RemoveContentMarks.pdf"
@@ -28,8 +29,8 @@ json_dict = {
         {
             "name": "remove_content_marks",
             "params": [
-                { "name": "object_types", "value": ".*" },                  # all object types
-                { "name": "flags", "value": "8" }                           # objects with an invalid mcid
+                {"name": "object_types", "value": ".*"},  # all object types
+                {"name": "flags", "value": "8"},  # objects with an invalid mcid
             ],
         }
     ]

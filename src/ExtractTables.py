@@ -1,39 +1,35 @@
 # ExtractTables.py
 # Example how to extract tables from PDF.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
-if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+from Utils import inputPath, outputPath
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
-if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
-def GetText (element, output):
+def GetText(element, output):
     elemType = element.GetType()
     if kPdeText == elemType:
         textElem = PdeText(element.obj)
         text = textElem.GetText()
         output.write(text)
-        output.write("\"")
+        output.write('"')
     else:
         count = element.GetNumChildren()
         if count == 0:
             return
         for i in range(0, count):
             child = element.GetChild(i)
-            if child is not None: 
+            if child is not None:
                 GetText(child, output)
 
+
 tableIndex = 1
+
+
 def SaveTable(element):
     global tableIndex, outputPath
     elem_type = element.GetType()
-    if (elem_type == kPdeTable):
+    if elem_type == kPdeTable:
         table = PdeTable(element.obj)
 
         path = f"{outputPath}/ExtractTables_{tableIndex}.csv"
@@ -51,52 +47,61 @@ def SaveTable(element):
                 col_span = cell.GetColSpan()
 
                 count = cell.GetNumChildren()
-                if ((row_span != 0) and (col_span != 0) and (count > 0)):
-                    output.write("\"")
+                if (row_span != 0) and (col_span != 0) and (count > 0):
+                    output.write('"')
                     for i in range(count):
                         child = cell.GetChild(i)
-                        if ((child.GetType() == kPdeText) and (child is not None)):
+                        if (child.GetType() == kPdeText) and (child is not None):
                             GetText(child, output)
-                        if (i < count):
+                        if i < count:
                             output.write("")
 
                 output.write(",")
 
-            if (col < col_count):
+            if col < col_count:
                 output.write("\n")
 
-        if (row < row_count):
-            output.write("\"")
+        if row < row_count:
+            output.write('"')
 
         output.close()
-        
+
     else:
         count = element.GetNumChildren()
-        if (count == 0):
+        if count == 0:
             return
         for i in range(count):
             child = element.GetChild(i)
             if child:
                 SaveTable(child)
 
+
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
+
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
 for i in range(0, doc.GetNumPages()):
     # acquire page
-    page = doc.AcquirePage(i)    
+    page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
+
     # get the page map of the current page
-    pageMap = page.AcquirePageMap()    
+    pageMap = page.AcquirePageMap()
     if pageMap is None:
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
     if not pageMap.CreateElements():
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
+
     # get page container
     container = pageMap.GetElement()
     if container is None:
-        raise RuntimeError(f'Unable to get page element: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to get page element: {pdfix.GetError()}")
+
     SaveTable(container)
     pageMap.Release()
     page.Release()

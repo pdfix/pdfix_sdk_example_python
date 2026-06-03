@@ -1,26 +1,27 @@
 # AddTags.py
 
 # import utils to load required shared libraries
-from Utils import inputPath, outputPath, stream_to_data
 from pdfixsdk import *
+
+from Utils import inputPath, outputPath, stream_to_data
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+    raise RuntimeError("Pdfix initialization failed")
 
 doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
 if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # load template configuration from JSON file
 tmpl = doc.GetTemplate()
 if not tmpl:
-    raise RuntimeError(f'Unable to get document template: {pdfix.GetError()}')
+    raise RuntimeError(f"Unable to get document template: {pdfix.GetError()}")
 
 preflight = True
 if preflight:
     # Auto-generate the template configuration using document Preflight
-    # Add reference pages into preflight processor. It's usefull to pick only certain 
+    # Add reference pages into preflight processor. It's usefull to pick only certain
     # pages from a large documents. If no pages are added, all proges are processed
     # in the Update method
     for i in range(doc.GetNumPages()):
@@ -43,7 +44,7 @@ else:
         raise RuntimeError(pdfix.GetError())
 
     if not tmpl.LoadFromStream(tmplStm, kDataFormatJson):
-        raise RuntimeError(f'Unable to load template: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to load template: {pdfix.GetError()}")
 
     tmplStm.Destroy()
 

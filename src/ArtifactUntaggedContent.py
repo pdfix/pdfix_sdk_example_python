@@ -7,8 +7,9 @@
 # pip install pdfix-sdk
 
 # import utils to load required shared libraries
-from Utils import inputPath, outputPath, jsonToRawData
 from pdfixsdk import *
+
+from Utils import inputPath, jsonToRawData, outputPath
 
 inputPdf = f"{inputPath}/tagged.pdf"
 outputPdf = f"{outputPath}/ArtifactUntagged.pdf"
@@ -29,7 +30,7 @@ json_dict = {
             "name": "artifact_content",
             "params": [
                 {
-                    "name": "object_types",                                 # objects to process defined by template
+                    "name": "object_types",  # objects to process defined by template
                     "value": {
                         "template": {
                             "object_update": [
@@ -37,17 +38,21 @@ json_dict = {
                                     "statement": "$if",
                                     "query": {
                                         "$and": [
-                                            {"$0_artifact": "false"},       # object is not tagged
-                                            {"$0_mcid": "-1"},              # object does not have assigned mcid
+                                            {
+                                                "$0_artifact": "false"
+                                            },  # object is not tagged
+                                            {
+                                                "$0_mcid": "-1"
+                                            },  # object does not have assigned mcid
                                         ],
                                         "param": ["pds_object"],
-                                    }
+                                    },
                                 }
                             ]
                         }
                     },
                 },
-                {"name": "artifact_type", "value": "0"},                    # mark object as an artifact
+                {"name": "artifact_type", "value": "0"},  # mark object as an artifact
             ],
         }
     ]

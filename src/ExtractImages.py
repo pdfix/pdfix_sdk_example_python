@@ -1,23 +1,15 @@
 # ExtractImages.py
 # Example how to extract images from PDF.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
-if pdfix is None:
-    raise RuntimeError('Pdfix initialization failed')
+from Utils import inputPath, outputPath
 
-doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
-if doc is None:
-    raise RuntimeError(f'Unable to open PDF: {pdfix.GetError()}')
 
-imageIndex = 1
 def SaveImage(pdfix, page, element):
     global imageIndex, outputPath
     elem_type = element.GetType()
-    if (elem_type == kPdeImage):
+    if elem_type == kPdeImage:
         image = PdeImage(element.obj)
         bbox = image.GetBBox()
 
@@ -33,8 +25,10 @@ def SaveImage(pdfix, page, element):
         devRect.bottom -= devRect.top
         devRect.top = 0
 
-        # prepare image 
-        psImage = pdfix.CreateImage(pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb)
+        # prepare image
+        psImage = pdfix.CreateImage(
+            pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb
+        )
         if psImage is None:
             raise RuntimeError(pdfix.GetError())
 
@@ -53,35 +47,46 @@ def SaveImage(pdfix, page, element):
         psImage.Destroy()
         pageView.Release()
 
-        imageIndex += 1        
+        imageIndex += 1
     else:
         count = element.GetNumChildren()
-        if (count == 0):
+        if count == 0:
             return
         for i in range(count):
             child = element.GetChild(i)
             if child:
                 SaveImage(pdfix, page, child)
 
+
+imageIndex = 1
+
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
+
+doc = pdfix.OpenDoc(f"{inputPath}/test.pdf", "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
 # iterate pages to search for images
 for i in range(0, doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise RuntimeError(f'Unable to acquire page: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
+
     # get the page map of the current page
-    pageMap = page.AcquirePageMap()    
+    pageMap = page.AcquirePageMap()
     if pageMap is None:
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
     if not pageMap.CreateElements():
-        raise RuntimeError(f'Unable to acquire page map: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
+
     # get page container
-    container = pageMap.GetElement()    
+    container = pageMap.GetElement()
     if container is None:
-        raise RuntimeError(f'Unable to get page element: {pdfix.GetError()}')
-    
+        raise RuntimeError(f"Unable to get page element: {pdfix.GetError()}")
+
     SaveImage(pdfix, page, container)
     pageMap.Release()
     page.Release()
