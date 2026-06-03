@@ -10,6 +10,9 @@ if pdfix is None:
     raise RuntimeError('Pdfix Initialization fail')
 
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
+
 page = doc.AcquirePage(0)
 
 # define link annotation bounding box
@@ -63,3 +66,4 @@ struct_elem_objr.PutName("Type", "OBJR")                # Type OBJR
 
 
 doc.Save(outputPath + "/TagLink.pdf", kSaveFull)
+doc.Close()

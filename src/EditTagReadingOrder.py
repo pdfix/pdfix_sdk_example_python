@@ -36,6 +36,8 @@ def find_tag(struct_tree, tag_type, return_parent):
   return process_struct_elem(root_elem, tag_type, return_parent)
 
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 struct_tree = doc.GetStructTree()
 document_tag = find_tag(struct_tree, "Document", False)         # find Document tag
@@ -46,3 +48,4 @@ p_tag_parent, p_tag_index = find_tag(struct_tree, "P", True)    # find parent of
 p_tag_parent.MoveChild(p_tag_index, document_tag, 0)
 
 doc.Save(outputPath + "/EditTagReadingOrder.pdf", kSaveFull)
+doc.Close()

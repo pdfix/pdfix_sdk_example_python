@@ -42,6 +42,8 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError('Pdfix Initialization fail')
 doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # prepare the command data
 cmdData = json.dumps(cmd).encode()
@@ -62,3 +64,4 @@ command.Run()
 # cleanup
 memStm.Destroy()
 doc.Save(outputPath + "/TagAs.pdf", kSaveFull)
+doc.Close()

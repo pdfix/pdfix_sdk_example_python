@@ -9,6 +9,8 @@ if pdfix is None:
 
 # open the document
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # load first page cotnent and the first page object
 page = doc.AcquirePage(0)

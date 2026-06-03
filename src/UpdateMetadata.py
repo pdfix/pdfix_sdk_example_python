@@ -38,3 +38,5 @@ doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
 if not doc.Save(outputPath + "/UpdateMetadata.pdf", kSaveFull):
     raise RuntimeError(pdfix.GetError())
+
+doc.Close()

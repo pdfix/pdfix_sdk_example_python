@@ -12,6 +12,8 @@ if pdfix is None:
 
 # open tagged PDF
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 # prepare PDF to JSON conversion params
 params = PdfJsonParams()

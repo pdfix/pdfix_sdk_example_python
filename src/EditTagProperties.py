@@ -42,6 +42,8 @@ def process_struct_elem(elem: PdsStructElement):
 
 
 doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+if doc is None:
+    raise RuntimeError('Unable to open pdf : ' + pdfix.GetError())
 
 struct_tree = doc.GetStructTree()
 for i in range(struct_tree.GetNumChildren()):
@@ -50,3 +52,4 @@ for i in range(struct_tree.GetNumChildren()):
   process_struct_elem(elem)
 
 doc.Save(outputPath + "/EditTagProperties.pdf", kSaveFull)
+doc.Close()
