@@ -7,7 +7,7 @@ if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
 # open the document
-doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -34,7 +34,7 @@ contentMark.SetTagObject(tagMcid, tagDict, False)
 page.Release()
 
 # save and close document
-if not doc.Save(output_path / "PageObjectMCID.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("PageObjectMCID.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

@@ -27,11 +27,11 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-with open(output_path / "ExtractText.txt", "w", encoding="utf-8") as output:
+with open(output_path.joinpath("ExtractText.txt"), "w", encoding="utf-8") as output:
     for i in range(doc.GetNumPages()):
         # acquire page
         page = doc.AcquirePage(i)

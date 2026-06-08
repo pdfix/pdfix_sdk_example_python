@@ -11,8 +11,8 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-with open(input_path / "test.pdf", "rb") as f:
-    data = bytearray(f.read())
+with open(input_path.joinpath("test.pdf"), "rb") as input_file:
+    data = bytearray(input_file.read())
 size = len(data)
 raw_data = (ctypes.c_ubyte * size).from_buffer(data)
 
@@ -29,7 +29,9 @@ doc.Close()
 memStm.Destroy()
 
 # open PDF from file stream
-fileStm = pdfix.CreateFileStream(str(input_path / "test.pdf"), kPsReadOnly)
+fileStm = pdfix.CreateFileStream(
+    input_path.joinpath("test.pdf").as_posix(), kPsReadOnly
+)
 if fileStm is None:
     raise RuntimeError(f"Unable to create file stream: {pdfix.GetError()}")
 
@@ -48,8 +50,8 @@ if not doc.SaveToStream(saveStm, kSaveFull):
 # write stream to file
 data = (ctypes.c_ubyte * saveStm.GetSize())()
 saveStm.Read(0, data, len(data))
-with open(output_path / "SaveToStream.pdf", "wb") as f:
-    f.write(bytearray(data))
+with open(output_path.joinpath("SaveToStream.pdf"), "wb") as output_file:
+    output_file.write(bytearray(data))
 saveStm.Destroy()
 
 doc.Close()

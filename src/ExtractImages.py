@@ -40,10 +40,10 @@ def SaveImage(pdfix, page, element):
             raise RuntimeError(pdfix.GetError())
 
         # save image to file
-        path = output_path / "ExtractImages_{imageIndex}.png"
+        path = output_path.joinpath(f"ExtractImages_{imageIndex}.png")
 
         imageParams = PdfImageParams()
-        psImage.SaveRect(path, imageParams, devRect)
+        psImage.SaveRect(path.as_posix(), imageParams, devRect)
         psImage.Destroy()
         pageView.Release()
 
@@ -64,7 +64,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 

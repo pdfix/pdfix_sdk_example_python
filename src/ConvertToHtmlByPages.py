@@ -11,7 +11,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -30,7 +30,9 @@ htmlParams.flags = (
 if not htmlConv.SetParams(htmlParams):
     raise RuntimeError(f"Unable to set HTML conversion parameters: {pdfix.GetError()}")
 
-docStm = pdfix.CreateFileStream(output_path / "page_1.html", kPsTruncate)
+docStm = pdfix.CreateFileStream(
+    output_path.joinpath("page_1.html").as_posix(), kPsTruncate
+)
 if not docStm:
     raise RuntimeError(f"Unable to create HTML output file: {pdfix.GetError()}")
 

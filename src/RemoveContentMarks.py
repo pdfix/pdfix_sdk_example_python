@@ -10,15 +10,15 @@ from pdfixsdk import *
 
 from Utils import input_path, jsonToRawData, output_path
 
-inputPdf = input_path / "tagged.pdf"
-outputPdf = output_path / "RemoveContentMarks.pdf"
+inputPdf = input_path.joinpath("tagged.pdf")
+outputPdf = output_path.joinpath("RemoveContentMarks.pdf")
 
 # initialize pdfix and open document
 pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPdf, "")
+doc = pdfix.OpenDoc(inputPdf.as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -56,7 +56,7 @@ memStm.Destroy()
 if not command.Run():
     raise RuntimeError(f"Unable to run command: {pdfix.GetError()}")
 
-if not doc.Save(outputPdf, kSaveFull):
+if not doc.Save(outputPdf.as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

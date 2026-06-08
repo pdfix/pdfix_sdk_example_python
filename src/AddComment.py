@@ -9,7 +9,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -35,7 +35,7 @@ annot.SetContents("This is my comment.")
 annot.AddReply("Mark Fish", "This is some reply.")
 page.Release()
 
-if not doc.Save(output_path / "AddComment.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("AddComment.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

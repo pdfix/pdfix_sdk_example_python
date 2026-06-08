@@ -121,7 +121,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -129,7 +129,9 @@ doc_template = doc.GetTemplate()
 if doc_template is None:
     raise RuntimeError(pdfix.GetError())
 
-confstm = pdfix.CreateFileStream(input_path / "config.json", kPsReadOnly)
+confstm = pdfix.CreateFileStream(
+    input_path.joinpath("config.json").as_posix(), kPsReadOnly
+)
 if confstm is None:
     raise RuntimeError(pdfix.GetError())
 

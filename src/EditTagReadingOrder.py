@@ -41,7 +41,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -63,7 +63,7 @@ if p_tag_parent is None:
 # move found P tag as the first element under Document tag
 p_tag_parent.MoveChild(p_tag_index, document_tag, 0)
 
-if not doc.Save(output_path / "EditTagReadingOrder.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("EditTagReadingOrder.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

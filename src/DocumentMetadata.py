@@ -11,7 +11,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -27,7 +27,9 @@ data = bytearray(sz)
 rawData = (ctypes.c_ubyte * sz).from_buffer(data)
 metaStm.Read(0, rawData, len(rawData))
 
-stm = pdfix.CreateFileStream(output_path / "DocumentMetadata.xml", kPsTruncate)
+stm = pdfix.CreateFileStream(
+    output_path.joinpath("DocumentMetadata.xml").as_posix(), kPsTruncate
+)
 if stm is None:
     raise RuntimeError(f"Unable to open output file: {pdfix.GetError()}")
 stm.Write(0, rawData, len(rawData))

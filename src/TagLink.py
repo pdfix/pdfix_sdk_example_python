@@ -9,7 +9,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -74,7 +74,7 @@ struct_elem_objr.PutName("Type", "OBJR")  # Type OBJR
 
 page.Release()
 
-if not doc.Save(output_path / "TagLink.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("TagLink.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

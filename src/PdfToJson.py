@@ -11,7 +11,7 @@ if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
 # open tagged PDF
-doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 

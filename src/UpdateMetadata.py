@@ -10,7 +10,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -45,7 +45,7 @@ if meta_stm_obj is None:
 
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
-if not doc.Save(output_path / "UpdateMetadata.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("UpdateMetadata.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

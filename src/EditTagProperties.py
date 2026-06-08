@@ -49,7 +49,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -62,7 +62,7 @@ for i in range(struct_tree.GetNumChildren()):
     elem = struct_tree.GetStructElementFromObject(obj)
     process_struct_elem(elem)
 
-if not doc.Save(output_path / "EditTagProperties.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("EditTagProperties.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

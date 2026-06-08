@@ -32,7 +32,7 @@ def SaveTable(element):
     if elem_type == kPdeTable:
         table = PdeTable(element.obj)
 
-        path = output_path / f"ExtractTables_{tableIndex}.csv"
+        path = output_path.joinpath(f"ExtractTables_{tableIndex}.csv")
         tableIndex += 1
         row_count = table.GetNumRows()
         col_count = table.GetNumCols()
@@ -78,7 +78,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 

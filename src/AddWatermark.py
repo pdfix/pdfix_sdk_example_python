@@ -5,7 +5,6 @@ from pdfixsdk import *
 
 from Utils import (
     PdfMatrix,
-    PdfMatrixConcat,
     PdfMatrixInverse,
     PdfMatrixRotate,
     PdfMatrixTranslate,
@@ -18,11 +17,13 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-img_stm = pdfix.CreateFileStream(input_path / "watermark.png", kPsReadOnly)
+img_stm = pdfix.CreateFileStream(
+    input_path.joinpath("watermark.png").as_posix(), kPsReadOnly
+)
 if img_stm is None:
     raise RuntimeError(pdfix.GetError())
 
@@ -111,7 +112,7 @@ for i in range(page_num):
     page.SetContent()
     page.Release()
 
-if not doc.Save(output_path / "AddWatermark.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("AddWatermark.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

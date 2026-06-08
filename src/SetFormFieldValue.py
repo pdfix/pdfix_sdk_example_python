@@ -9,7 +9,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -19,7 +19,7 @@ if field is not None:
     value = "New Value"
     field.SetValue(value)
 
-if not doc.Save(output_path / "SetFormFieldValue.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("SetFormFieldValue.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()

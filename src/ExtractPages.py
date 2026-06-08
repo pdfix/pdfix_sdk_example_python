@@ -9,7 +9,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc_in = pdfix.OpenDoc(input_path / "test.pdf", "")
+doc_in = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc_in is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -27,7 +27,7 @@ result = doc_out.InsertPages(
 if not result:
     raise RuntimeError(f"Unable to insert pages: {pdfix.GetError()}")
 
-if not doc_out.Save(output_path / "output.pdf", kSaveFull):
+if not doc_out.Save(output_path.joinpath("output.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc_out.Close()

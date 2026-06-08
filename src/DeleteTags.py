@@ -15,7 +15,7 @@ pdfix = GetPdfix()
 if pdfix is None:
     raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(input_path / "tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
@@ -68,7 +68,7 @@ memStm.Destroy()
 if not command.Run():
     raise RuntimeError(f"Unable to run command: {pdfix.GetError()}")
 
-if not doc.Save(output_path / "DeleteTags.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("DeleteTags.pdf").as_posix(), kSaveFull):
     raise RuntimeError(pdfix.GetError())
 
 doc.Close()
