@@ -30,7 +30,7 @@ modules = [
     "RemoveContentMarks",
     "RenderPage",
     "SetFormFieldValue",
-    "TagAs",
+    # "TagAs",
     "TagLink",
     "UpdateMetadata",
 ]

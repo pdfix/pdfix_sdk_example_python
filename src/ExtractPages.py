@@ -18,8 +18,8 @@ if doc_out is None:
     raise RuntimeError(f"Unable to create PDF: {pdfix.GetError()}")
 
 where_to_insert_index = -1
-from_page_index = 1
 to_page_index = doc_in.GetNumPages() - 1
+from_page_index = min(1, to_page_index)
 result = doc_out.InsertPages(
     where_to_insert_index, doc_in, from_page_index, to_page_index, kPageInsertAll
 )

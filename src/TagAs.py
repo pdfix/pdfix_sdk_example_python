@@ -10,7 +10,7 @@ from Utils import bytearray_to_data, input_path, output_path
 cmd = {
     "commands": [
         {
-            "name": "tag_as",
+            "name": "tag_content",
             "params": [
                 {
                     "name": "object_types",
