@@ -8,25 +8,31 @@ sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src
 
 modules = [
     "AddComment",
-    "AddTags",
     "AddTagAsArtifact",
+    "AddTags",
     "AddWatermark",
+    "ArtifactUntaggedContent",
     "ConvertToHtml",
     "ConvertToHtmlByPages",
+    "DeleteTags",
     "DocumentMetadata",
     "EditContent",
     "EditPageObjectMCID",
     "EditTagProperties",
     "EditTagReadingOrder",
     "ExtractImages",
+    "ExtractPages",
     "ExtractTables",
     "ExtractText",
     "MakeAccessible",
     "OpenDocFromStream",
-    "RenderPage",
     "PdfToJson",
+    "RemoveContentMarks",
+    "RenderPage",
     "SetFormFieldValue",
+    "TagAs",
     "TagLink",
+    "UpdateMetadata",
 ]
 
 failed = []
