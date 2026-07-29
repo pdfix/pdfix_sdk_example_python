@@ -6,7 +6,7 @@ import json
 import math
 from pathlib import Path
 
-from pdfixsdk import *
+from pdfixsdk import PdfMatrix
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 input_path = PROJECT_DIR.joinpath("resources")

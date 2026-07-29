@@ -1,7 +1,15 @@
 # RenderPage.py
 # Copyright (c) 2018 PDFix. All Rights Reserved.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfImageParams,
+    PdfPageRenderParams,
+    kImageDIBFormatArgb,
+    kImageFormatJpg,
+    kPsTruncate,
+    kRotate0,
+)
 
 from Utils import input_path, output_path
 

@@ -3,7 +3,16 @@
 
 import ctypes
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfHtmlParams,
+    kHtmlNoExternalCSS,
+    kHtmlNoExternalFONT,
+    kHtmlNoExternalIMG,
+    kHtmlNoExternalJS,
+    kHtmlNoHeadNode,
+    kPsTruncate,
+)
 
 from Utils import input_path, output_path
 

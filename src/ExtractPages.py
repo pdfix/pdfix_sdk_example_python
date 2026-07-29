@@ -1,7 +1,7 @@
 # ExtractPages.py
 # Example how to use CreateDoc() and InsertPages() to extract page(s) from PDF.
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kPageInsertAll, kSaveFull
 
 from Utils import input_path, output_path
 

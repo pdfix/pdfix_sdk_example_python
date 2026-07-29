@@ -3,7 +3,7 @@
 
 import ctypes
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kPsTruncate
 
 from Utils import input_path, output_path
 

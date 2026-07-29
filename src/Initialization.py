@@ -1,7 +1,7 @@
 # Initialization.py
 # Pdfix initialization example
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix
 
 pdfix = GetPdfix()
 if pdfix is None:

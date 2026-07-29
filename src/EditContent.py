@@ -1,4 +1,14 @@
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfMatrix,
+    PdfPage,
+    PdfPoint,
+    kFillRuleEvenOdd,
+    kFontAnsiCharset,
+    kFontDefANSICodepage,
+    kFontForceBold,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path
 

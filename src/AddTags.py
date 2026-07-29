@@ -1,6 +1,12 @@
 # AddTags.py
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfTagsParams,
+    kDataFormatJson,
+    kPsReadOnly,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path, stream_to_data
 

@@ -1,7 +1,15 @@
 # TagLink.py
 # Example how to create and tag a Link anotation with URI action.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfLinkAnnot,
+    PdfRect,
+    PdsDictionary,
+    kActionURI,
+    kAnnotLink,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path
 

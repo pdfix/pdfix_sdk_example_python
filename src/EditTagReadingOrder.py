@@ -1,7 +1,12 @@
 # EditTagReadingOrder.py
 # Example how to edit the reading order of tags
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdsStructElement,
+    kPdsStructChildElement,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path
 

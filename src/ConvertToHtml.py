@@ -1,7 +1,13 @@
 # ConvertToHtml.py
 # Example how to convert PDF to HTML.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfHtmlParams,
+    kHtmlNoExternalCSS,
+    kHtmlNoExternalIMG,
+    kHtmlNoExternalJS,
+)
 
 from Utils import input_path, output_path
 

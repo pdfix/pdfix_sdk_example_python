@@ -4,8 +4,26 @@
 import base64
 import ctypes
 import json
+from typing import Any
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdeElement,
+    PdeImage,
+    PdeText,
+    PdfColorState,
+    PdfImageParams,
+    PdfPageRenderParams,
+    PdfRect,
+    PdfTextState,
+    PsImage,
+    kDataFormatJson,
+    kImageDIBFormatArgb,
+    kPdeImage,
+    kPdeText,
+    kPsReadOnly,
+    kRotate0,
+)
 
 from Utils import input_path
 
@@ -28,7 +46,7 @@ def ImageToBase64(image: PsImage) -> str:
     return imageDataBase64
 
 
-def ExtractElemToBase64(elem: PdeElement, node: dict):
+def ExtractElemToBase64(elem: PdeElement, node: dict[str, Any]) -> None:
     page = elem.GetPageMap().GetPage()
     renderParams = PdfPageRenderParams()
     renderParams.clip_box = elem.GetBBox()
@@ -56,8 +74,8 @@ def ExtractElemToBase64(elem: PdeElement, node: dict):
     renderParams.image.Destroy()
 
 
-def ExtractBBox(bbox: PdfRect, node: dict):
-    bboxNode = {}
+def ExtractBBox(bbox: PdfRect, node: dict[str, Any]) -> None:
+    bboxNode: dict[str, Any] = {}
     bboxNode["left"] = bbox.left
     bboxNode["top"] = bbox.top
     bboxNode["right"] = bbox.right
@@ -65,13 +83,13 @@ def ExtractBBox(bbox: PdfRect, node: dict):
     node["bbox"] = bboxNode
 
 
-def ExtractColorState(colorState: PdfColorState, node: dict):
-    colorStateNode = {}
+def ExtractColorState(colorState: PdfColorState, node: dict[str, Any]) -> None:
+    colorStateNode: dict[str, Any] = {}
     node["colorState"] = colorStateNode
 
 
-def ExtractTextState(textState: PdfTextState, node: dict):
-    textStateNode = {}
+def ExtractTextState(textState: PdfTextState, node: dict[str, Any]) -> None:
+    textStateNode: dict[str, Any] = {}
     ExtractColorState(textState.color_state, textStateNode)
     if textState.font:
         textStateNode["fontName"] = textState.font.GetFontName()
@@ -79,20 +97,20 @@ def ExtractTextState(textState: PdfTextState, node: dict):
     node["textState"] = textStateNode
 
 
-def ExtractTextElement(textElem: PdeText, node: dict):
+def ExtractTextElement(textElem: PdeText, node: dict[str, Any]) -> None:
     textState = textElem.GetTextState()
     ExtractTextState(textState, node)
     node["text"] = textElem.GetText()
     node["style"] = textElem.GetTextStyle()
 
 
-def ExtractImageElement(imageElem: PdeImage, node: dict):
-    imageNode = {}
+def ExtractImageElement(imageElem: PdeImage, node: dict[str, Any]) -> None:
+    imageNode: dict[str, Any] = {}
     ExtractElemToBase64(imageElem, imageNode)
     node["imageData"] = imageNode
 
 
-def ExtractPageElement(elem: PdeElement, node: dict):
+def ExtractPageElement(elem: PdeElement, node: dict[str, Any]) -> None:
     elemType = elem.GetType()
     if kPdeText == elemType:
         node["type"] = "text"
@@ -111,7 +129,7 @@ def ExtractPageElement(elem: PdeElement, node: dict):
         for i in range(count):
             child = elem.GetChild(i)
             if child is not None:
-                childNode = {}
+                childNode: dict[str, Any] = {}
                 ExtractPageElement(child, childNode)
                 childList.append(childNode)
         node["kids"] = childList
@@ -146,7 +164,7 @@ pagesList = []
 
 # iterate all pages to extract the content
 for i in range(doc.GetNumPages()):
-    pageNode = {}
+    pageNode: dict[str, Any] = {}
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
@@ -166,10 +184,13 @@ for i in range(doc.GetNumPages()):
     ExtractPageElement(container, pageNode)
 
     # append all artifacts into the output
-    artifactsNode = []
+    artifactsNode: list[dict[str, Any]] = []
     for j in range(pageMap.GetNumArtifacts()):
-        artifactNode = {}
-        ExtractPageElement(pageMap.GetArtifact(j), artifactNode)
+        artifact = pageMap.GetArtifact(j)
+        if artifact is None:
+            continue
+        artifactNode: dict[str, Any] = {}
+        ExtractPageElement(artifact, artifactNode)
         artifactsNode.append(artifactNode)
 
     pageNode["artifacts"] = artifactsNode

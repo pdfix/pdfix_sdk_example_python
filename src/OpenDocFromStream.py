@@ -3,7 +3,7 @@
 
 import ctypes
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kPsReadOnly, kSaveFull
 
 from Utils import input_path, output_path
 

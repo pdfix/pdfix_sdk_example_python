@@ -3,7 +3,15 @@
 
 import uuid
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdsStructElement,
+    kPdsStructChildElement,
+    kPdsStructChildObject,
+    kPdsStructChildPageContent,
+    kPdsStructChildStreamContent,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path
 

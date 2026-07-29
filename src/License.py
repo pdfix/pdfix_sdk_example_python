@@ -2,7 +2,7 @@
 # Pdfix license management
 import json
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kDataFormatJson
 
 from Utils import stream_to_data
 

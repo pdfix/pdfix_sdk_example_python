@@ -1,7 +1,13 @@
 # ExtractTables.py
 # Example how to extract tables from PDF.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdeTable,
+    PdeText,
+    kPdeTable,
+    kPdeText,
+)
 
 from Utils import input_path, output_path
 

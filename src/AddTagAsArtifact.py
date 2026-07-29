@@ -1,6 +1,13 @@
 # AddTagAsArtifact.py
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfPage,
+    PdfTagsParams,
+    PdsStructElement,
+    kPdsStructChildElement,
+    kSaveFull,
+)
 
 from Utils import input_path, output_path
 

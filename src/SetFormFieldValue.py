@@ -1,7 +1,7 @@
 # SetFormFieldValue.py
 # Example how to fill PDF form.
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kSaveFull
 
 from Utils import input_path, output_path
 

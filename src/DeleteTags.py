@@ -6,7 +6,7 @@
 # Installation:
 # pip install pdfix-sdk
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kDataFormatJson, kSaveFull
 
 from Utils import input_path, jsonToRawData, output_path
 

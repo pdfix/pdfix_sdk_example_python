@@ -2,7 +2,7 @@
 # Python example for updateing the XMP metadata and document Info dictionary with PDFix SDK
 
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, kSaveFull
 
 from Utils import bytearray_to_data, input_path, output_path, stream_to_data
 

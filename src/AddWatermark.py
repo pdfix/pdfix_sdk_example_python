@@ -1,7 +1,15 @@
 # AddWatermark.py
 # Example how to extract text from PDF.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    kAlignmentCenter,
+    kAlignmentRight,
+    kAlignmentTop,
+    kImageFormatPng,
+    kPsReadOnly,
+    kSaveFull,
+)
 
 from Utils import (
     PdfMatrix,

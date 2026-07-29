@@ -2,7 +2,14 @@
 
 import ctypes
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfJsonParams,
+    kJsonExportBBox,
+    kJsonExportDocInfo,
+    kJsonExportStructTree,
+    kJsonExportText,
+)
 
 from Utils import input_path
 

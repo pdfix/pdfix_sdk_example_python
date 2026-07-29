@@ -1,7 +1,7 @@
 # ExtractText.py
 # Example how to extract text from PDF.
 
-from pdfixsdk import *
+from pdfixsdk import GetPdfix, PdeText, kPdeText
 
 from Utils import input_path, output_path
 

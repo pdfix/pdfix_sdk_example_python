@@ -1,7 +1,15 @@
 # ExtractImages.py
 # Example how to extract images from PDF.
 
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdeImage,
+    PdfImageParams,
+    PdfPageRenderParams,
+    kImageDIBFormatArgb,
+    kPdeImage,
+    kRotate0,
+)
 
 from Utils import input_path, output_path
 

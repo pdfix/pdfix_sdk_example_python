@@ -1,7 +1,7 @@
+import importlib
 import os
 import sys
 import traceback
-import importlib
 
 # add src to path
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
@@ -30,7 +30,6 @@ modules = [
     "RemoveContentMarks",
     "RenderPage",
     "SetFormFieldValue",
-    # "TagAs",
     "TagLink",
     "UpdateMetadata",
 ]
