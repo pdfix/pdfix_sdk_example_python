@@ -1,38 +1,56 @@
-# AddWatermark.py 
+# AddWatermark.py
 # Example how to extract text from PDF.
 
-# import utils to load required shared libraries
-from Utils import *
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    kAlignmentCenter,
+    kAlignmentRight,
+    kAlignmentTop,
+    kImageFormatPng,
+    kPsReadOnly,
+    kSaveFull,
+)
 
-pdfix  = GetPdfix()
+from Utils import (
+    PdfMatrix,
+    PdfMatrixInverse,
+    PdfMatrixRotate,
+    PdfMatrixTranslate,
+    input_path,
+    kPi,
+    output_path,
+)
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-img_stm = pdfix.CreateFileStream( inputPath + "/watermark.png" , kPsReadOnly)
+img_stm = pdfix.CreateFileStream(
+    input_path.joinpath("watermark.png").as_posix(), kPsReadOnly
+)
 if img_stm is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 # identify image format from file path
 format = kImageFormatPng
 image_obj = doc.CreateXObjectFromImage(img_stm, format, 0)
 if image_obj is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 page_num = doc.GetNumPages()
 for i in range(page_num):
     page = doc.AcquirePage(i)
     if page is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
 
     content = page.GetContent()
     if content is None:
-        raise Exception(pdfix.GetError())
-            
+        raise RuntimeError(pdfix.GetError())
+
     xobjdict = image_obj.GetStreamDict()
     width = xobjdict.GetNumber("Width")
     height = xobjdict.GetNumber("Height")
@@ -58,25 +76,27 @@ for i in range(page_num):
     # rotation
     rotation = 45.0
     if rotation != 0.0:
-        matrix = PdfMatrixTranslate(matrix, -width_scaled / 2, -height_scaled / 2, False)
+        matrix = PdfMatrixTranslate(
+            matrix, -width_scaled / 2, -height_scaled / 2, False
+        )
         matrix = PdfMatrixRotate(matrix, (rotation / 180.0) * kPi, False)
         matrix = PdfMatrixTranslate(matrix, width_scaled / 2, height_scaled / 2, False)
-    
+
     rect_h = crop_rect.right - crop_rect.left
     rect_v = crop_rect.top - crop_rect.bottom
 
     # horizontal align
     h_align = kAlignmentCenter
-    if (h_align == kAlignmentCenter):
+    if h_align == kAlignmentCenter:
         matrix = PdfMatrixTranslate(matrix, (rect_h - width_scaled) / 2, 0.0, False)
-    elif (h_align == kAlignmentRight):
+    elif h_align == kAlignmentRight:
         matrix = PdfMatrixTranslate(matrix, (rect_h - width_scaled), 0.0, False)
 
     # vertical align
     v_align = kAlignmentCenter
-    if (v_align == kAlignmentCenter):
+    if v_align == kAlignmentCenter:
         matrix = PdfMatrixTranslate(matrix, 0.0, (rect_v - height_scaled) / 2, False)
-    elif (v_align == kAlignmentTop):
+    elif v_align == kAlignmentTop:
         matrix = PdfMatrixTranslate(matrix, 0.0, (rect_v - height_scaled), False)
 
     # horizontal and vertical offset
@@ -100,7 +120,9 @@ for i in range(page_num):
     page.SetContent()
     page.Release()
 
-if (not doc.Save(outputPath + "/AddWatermark.pdf", kSaveFull)):
-    raise Exception(pdfix.GetError())
+if not doc.Save(output_path.joinpath("AddWatermark.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

@@ -1,29 +1,37 @@
 # ConvertToHtml.py
 # Example how to convert PDF to HTML.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfHtmlParams,
+    kHtmlNoExternalCSS,
+    kHtmlNoExternalIMG,
+    kHtmlNoExternalJS,
+)
 
-pdfix  = GetPdfix()
+from Utils import input_path, output_path
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 htmlConv = doc.CreateHtmlConversion()
 if htmlConv is None:
-    raise Exception('Unable to open html doc : ' + pdfix.GetError())   
+    raise RuntimeError(f"Unable to create HTML conversion: {pdfix.GetError()}")
 
 # convert all pages at once
-htmlParams=PdfHtmlParams()
+htmlParams = PdfHtmlParams()
 htmlParams.flags = kHtmlNoExternalCSS | kHtmlNoExternalJS | kHtmlNoExternalIMG
 if not htmlConv.SetParams(htmlParams):
-    raise Exception('Unable to set params : ' + pdfix.GetError())    
-if not htmlConv.Save(outputPath + "/index.html"):
-    raise Exception('Unable to open html doc : ' + pdfix.GetError())    
-    
+    raise RuntimeError(f"Unable to set HTML conversion parameters: {pdfix.GetError()}")
+if not htmlConv.Save(output_path.joinpath("index.html").as_posix()):
+    raise RuntimeError(f"Unable to save HTML document: {pdfix.GetError()}")
+
 htmlConv.Destroy()
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

@@ -1,23 +1,27 @@
 # AddComment.py
 # Example how to add a comment with reply into PDF.
 
-from os import *
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfRect,
+    PdfTextAnnot,
+    kAnnotText,
+    kSaveFull,
+)
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 
-pdfix  = GetPdfix()
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise Exception('Unable to acquire page : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 cropBox = page.GetCropBox()
 
@@ -28,16 +32,18 @@ annotRect.bottom = (cropBox.top + cropBox.bottom) / 2.0 - 10
 annotRect.right = (cropBox.right + cropBox.left) / 2.0 + 10
 annotRect.top = (cropBox.top + cropBox.bottom) / 2.0 + 10
 annot = page.CreateAnnot(kAnnotText, annotRect)
+if annot is None:
+    raise RuntimeError(pdfix.GetError())
 annot.__class__ = PdfTextAnnot
 page.AddAnnot(-1, annot)
-if annot is None:
-    raise Exception(pdfix.GetError())
 annot.SetAuthor("Peter Brown")
 annot.SetContents("This is my comment.")
 annot.AddReply("Mark Fish", "This is some reply.")
 page.Release()
 
-if not doc.Save(outputPath + "/AddComment.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+if not doc.Save(output_path.joinpath("AddComment.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

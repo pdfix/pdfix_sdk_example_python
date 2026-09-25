@@ -1,39 +1,53 @@
 # UpdateMetadata.py
 # Python example for updateing the XMP metadata and document Info dictionary with PDFix SDK
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath, stream_to_data, bytearray_to_data
-from pdfixsdk import *
-import ctypes
 
-pdfix  = GetPdfix()
+from pdfixsdk import GetPdfix, kSaveFull
+
+from Utils import bytearray_to_data, input_path, output_path, stream_to_data
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # manage document info dictionary
 title = doc.GetInfo("Title")
 keywords = doc.GetInfo("Keywords")
 creator = doc.GetInfo("Creator")
-doc.SetInfo("Title", title[::-1]) # reverse string
+doc.SetInfo("Title", title[::-1])  # reverse string
 doc.SetInfo("Keywords", keywords[::-1])
 doc.SetInfo("Creator", creator[::-1])
 
 # read/write document XMP metadata
 meta_stm_obj = doc.GetMetadata()
+if meta_stm_obj is None:
+    raise RuntimeError(f"Unable to read document metadata: {pdfix.GetError()}")
+
 byte_array = bytearray(stream_to_data(meta_stm_obj))
 
-# load/modify XMP metadata 
-byte_array.extend(bytearray(b'<modified></modified>'))
+# load/modify XMP metadata
+byte_array.extend(bytearray(b"<modified></modified>"))
 
 # write document XMP metadata
+size = len(byte_array)
 raw_data = bytearray_to_data(byte_array)
 meta_stm_dict = meta_stm_obj.GetStreamDict().Clone(False)
+if meta_stm_dict is None:
+    raise RuntimeError(pdfix.GetError())
+
 meta_stm_obj = doc.CreateStreamObject(True, meta_stm_dict, raw_data, size)
+if meta_stm_obj is None:
+    raise RuntimeError(pdfix.GetError())
+
 doc.GetRootObject().Put("Metadata", meta_stm_obj)
 
-if not doc.Save(outputPath + "/UpdateMetadata.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+if not doc.Save(output_path.joinpath("UpdateMetadata.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
+doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

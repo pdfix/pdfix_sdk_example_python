@@ -1,27 +1,30 @@
 # ExtractImages.py
 # Example how to extract images from PDF.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdeImage,
+    PdfImageParams,
+    PdfPageRenderParams,
+    kImageDIBFormatArgb,
+    kPdeImage,
+    kRotate0,
+)
 
-pdfix  = GetPdfix()
-if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+from Utils import input_path, output_path
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
-if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
 
-imageIndex = 1
 def SaveImage(pdfix, page, element):
-    global imageIndex, outputPath
+    global imageIndex, output_path
     elem_type = element.GetType()
-    if (elem_type == kPdeImage):
+    if elem_type == kPdeImage:
         image = PdeImage(element.obj)
         bbox = image.GetBBox()
 
         pageView = page.AcquirePageView(2.0, kRotate0)
+        if pageView is None:
+            raise RuntimeError(pdfix.GetError())
+
         devRect = pageView.RectToDevice(bbox)
 
         # move dev rect to 0,0 - content will be drawn to the top-left corner
@@ -30,52 +33,73 @@ def SaveImage(pdfix, page, element):
         devRect.bottom -= devRect.top
         devRect.top = 0
 
-        # prepare image 
-        psImage = pdfix.CreateImage(pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb)        
+        # prepare image
+        psImage = pdfix.CreateImage(
+            pageView.GetDeviceWidth(), pageView.GetDeviceHeight(), kImageDIBFormatArgb
+        )
+        if psImage is None:
+            raise RuntimeError(pdfix.GetError())
+
         renderParams = PdfPageRenderParams()
         renderParams.clip_box = bbox
         renderParams.image = psImage
         renderParams.matrix = pageView.GetDeviceMatrix()
-        page.DrawContent(renderParams)
+        if not page.DrawContent(renderParams):
+            raise RuntimeError(pdfix.GetError())
 
         # save image to file
-        path = outputPath + "/ExtractImages_" + str(imageIndex) + ".png"
+        path = output_path.joinpath(f"ExtractImages_{imageIndex}.png")
 
         imageParams = PdfImageParams()
-        psImage.SaveRect(path, imageParams, devRect)
+        psImage.SaveRect(path.as_posix(), imageParams, devRect)
         psImage.Destroy()
+        pageView.Release()
 
-        imageIndex += 1        
+        imageIndex += 1
     else:
         count = element.GetNumChildren()
-        if (count == 0):
+        if count == 0:
             return
         for i in range(count):
             child = element.GetChild(i)
             if child:
                 SaveImage(pdfix, page, child)
 
+
+imageIndex = 1
+
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
+
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
 # iterate pages to search for images
-for i in range(0, doc.GetNumPages()):
+for i in range(doc.GetNumPages()):
     # acquire page
     page = doc.AcquirePage(i)
     if page is None:
-        raise Exception('Acquire Page fail : ' + pdfix.GetError())
-    
+        raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
+
     # get the page map of the current page
-    pageMap = page.AcquirePageMap()    
+    pageMap = page.AcquirePageMap()
     if pageMap is None:
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
     if not pageMap.CreateElements():
-        raise Exception('Acquire PageMap fail: ' + pdfix.GetError())
-    
+        raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
+
     # get page container
-    container = pageMap.GetElement()    
+    container = pageMap.GetElement()
     if container is None:
-        raise Exception('Get page element failure : ' + pdfix.GetError())
-    
+        raise RuntimeError(f"Unable to get page element: {pdfix.GetError()}")
+
     SaveImage(pdfix, page, container)
+    pageMap.Release()
     page.Release()
 
 print(str(imageIndex - 1) + " images found")
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

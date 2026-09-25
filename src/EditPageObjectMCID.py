@@ -1,15 +1,21 @@
-import os
-from pdfixsdk import *
-from Utils import inputPath, outputPath
+from pdfixsdk import GetPdfix, kSaveFull
 
+from Utils import input_path, output_path
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
 
 # open the document
-doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # load first page cotnent and the first page object
 page = doc.AcquirePage(0)
+if page is None:
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
+
 content = page.GetContent()
 pageObject = content.GetObject(0)
 
@@ -28,5 +34,9 @@ contentMark.SetTagObject(tagMcid, tagDict, False)
 page.Release()
 
 # save and close document
-doc.Save(outputPath + "/PageObjectMCID.pdf", kSaveFull)
+if not doc.Save(output_path.joinpath("PageObjectMCID.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
+
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

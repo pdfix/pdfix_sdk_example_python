@@ -1,32 +1,18 @@
-# import utils to load required shared libraries
-print("START", flush=True)
+# MakeAccessible.py
+# Example how to run the make_accessible batch command.
+
 import json
 
-from Utils import inputPath, outputPath
-print("Loading Pdfix...", flush=True)
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    kDataFormatJson,
+    kPsReadOnly,
+    kSaveFull,
+)
 
-print("Loading Utils...", flush=True)
-import Utils
+from Utils import input_path, output_path, stream_to_data
 
-commandPath = ""  # inputPath + "/make-accessible.json"
-
-print("GetPdfix...", flush=True)
-pdfix = GetPdfix()
-if pdfix is None:
-    raise Exception("Pdfix Initialization fail")
-
-print("OpenDoc...", flush=True)
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
-if doc is None:
-    raise Exception("Unable to open pdf : " + pdfix.GetError())
-
-print("GetCommand...", flush=True)
-command = doc.GetCommand()
-if command is None:
-    raise Exception(pdfix.GetError())
-
-cmdStm = None
+commandPath = ""  # input_path.joinpath("make-accessible.json").as_posix()
 
 
 def extract_json_name(json_text):
@@ -40,6 +26,23 @@ def extract_json_name(json_text):
         return None
 
 
+print("GetPdfix...", flush=True)
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
+
+print("OpenDoc...", flush=True)
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
+print("GetCommand...", flush=True)
+command = doc.GetCommand()
+if command is None:
+    raise RuntimeError(pdfix.GetError())
+
+cmdStm = None
+
 try:
     # load the make_accessible command from JSON file
     # or find the embedded custom action named "make_accessible"
@@ -49,15 +52,15 @@ try:
         for i in range(cmd_count):
             tmpStm = pdfix.CreateMemStream()
             if tmpStm is None:
-                raise Exception(pdfix.GetError())
+                raise RuntimeError(pdfix.GetError())
 
             try:
                 if not command.SaveCustomActionToStream(
                     i, tmpStm, kDataFormatJson, kSaveFull
                 ):
-                    raise Exception(pdfix.GetError())
+                    raise RuntimeError(pdfix.GetError())
 
-                json_text = bytearray(Utils.stream_to_data(tmpStm))
+                json_text = bytearray(stream_to_data(tmpStm))
                 name = extract_json_name(json_text)
 
                 if name == "make_accessible":
@@ -71,14 +74,16 @@ try:
                     tmpStm.Destroy()
 
         if cmdStm is None:
-            raise Exception("Embedded custom action 'make_accessible' was not found.")
+            raise RuntimeError(
+                "Embedded custom action 'make_accessible' was not found."
+            )
     else:
         cmdStm = pdfix.CreateFileStream(commandPath, kPsReadOnly)
         if cmdStm is None:
-            raise Exception(pdfix.GetError())
+            raise RuntimeError(pdfix.GetError())
 
     if not command.LoadParamsFromStream(cmdStm, kDataFormatJson):
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
 
     cmdStm.Destroy()
     cmdStm = None
@@ -86,16 +91,18 @@ try:
     # run the command
     print("Running command...", flush=True)
     if not command.Run():
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
 
     print("Save...", flush=True)
-    if not doc.Save(outputPath + "/MakeAccessible.pdf", kSaveFull):
-        raise Exception(pdfix.GetError())
+    if not doc.Save(output_path.joinpath("MakeAccessible.pdf").as_posix(), kSaveFull):
+        raise RuntimeError(pdfix.GetError())
 except Exception as e:
     print(f"ERROR: {e}", flush=True)
-    raise    
+    raise
 
 finally:
     if cmdStm is not None:
         cmdStm.Destroy()
     doc.Close()
+    # pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+    # keeps running but must release PDFix (see Initialization.py, License.py).

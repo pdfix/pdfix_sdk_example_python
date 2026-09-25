@@ -1,27 +1,48 @@
-# PDF to JSON conversion example 
+# PDF to JSON conversion example
 
-import shutil, os, ctypes
-from pdfixsdk import *
+import ctypes
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
+from pdfixsdk import (
+    GetPdfix,
+    PdfJsonParams,
+    kJsonExportBBox,
+    kJsonExportDocInfo,
+    kJsonExportStructTree,
+    kJsonExportText,
+)
+
+from Utils import input_path
 
 pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
 
 # open tagged PDF
-doc = pdfix.OpenDoc(inputPath + "/tagged.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("tagged.pdf").as_posix(), "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # prepare PDF to JSON conversion params
 params = PdfJsonParams()
-params.flags = (kJsonExportStructTree | kJsonExportDocInfo | kJsonExportBBox | kJsonExportText)  # see PdfJsonFlags flagss to extract other conten
+params.flags = (
+    kJsonExportStructTree | kJsonExportDocInfo | kJsonExportBBox | kJsonExportText
+)  # see PdfJsonFlags flagss to extract other conten
 
 # prepare PDF to JSON conversion
 jsonConv = doc.CreateJsonConversion()
-jsonConv.SetParams(params)
+if jsonConv is None:
+    raise RuntimeError(f"Unable to create JSON conversion: {pdfix.GetError()}")
+
+if not jsonConv.SetParams(params):
+    raise RuntimeError(f"Unable to set JSON conversion parameters: {pdfix.GetError()}")
 
 # extract data to stream
 memStm = pdfix.CreateMemStream()
-jsonConv.SaveToStream(memStm)
+if memStm is None:
+    raise RuntimeError(pdfix.GetError())
+
+if not jsonConv.SaveToStream(memStm):
+    raise RuntimeError(f"Unable to save JSON to stream: {pdfix.GetError()}")
 
 # read memmory stream into bytearray
 sz = memStm.GetSize()
@@ -34,4 +55,5 @@ print(data.decode("utf-8"))
 # cleanup
 memStm.Destroy()
 doc.Close()
-
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

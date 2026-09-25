@@ -1,48 +1,61 @@
-# OpenDocFromStream.py 
-# Example how to extract text from PDF.
+# OpenDocFromStream.py
+# Example how to open and save a PDF using streams.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
-from pdfixsdk import *
-import ctypes  
+import ctypes
 
-pdfix  = GetPdfix()
+from pdfixsdk import GetPdfix, kPsReadOnly, kSaveFull
+
+from Utils import input_path, output_path
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-f = open(inputPath + "/test.pdf", "rb")
-data = bytearray(f.read())
-size = f.tell()
-f.close()
+with open(input_path.joinpath("test.pdf"), "rb") as input_file:
+    data = bytearray(input_file.read())
+size = len(data)
 raw_data = (ctypes.c_ubyte * size).from_buffer(data)
 
 # open PDF from memory stream
 memStm = pdfix.CreateMemStream()
+if memStm is None:
+    raise RuntimeError(f"Unable to create memory stream: {pdfix.GetError()}")
+
 memStm.Write(0, raw_data, size)
 doc = pdfix.OpenDocFromStream(memStm, "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 doc.Close()
 memStm.Destroy()
 
 # open PDF from file stream
-fileStm = pdfix.CreateFileStream(inputPath + "/test.pdf", kPsReadOnly)
+fileStm = pdfix.CreateFileStream(
+    input_path.joinpath("test.pdf").as_posix(), kPsReadOnly
+)
+if fileStm is None:
+    raise RuntimeError(f"Unable to create file stream: {pdfix.GetError()}")
+
 doc = pdfix.OpenDocFromStream(fileStm, "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # save PDF to to stream
 saveStm = pdfix.CreateMemStream()
+if saveStm is None:
+    raise RuntimeError(f"Unable to create memory stream: {pdfix.GetError()}")
+
 if not doc.SaveToStream(saveStm, kSaveFull):
-    raise Exception('Unable to save pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to save PDF: {pdfix.GetError()}")
 
 # write stream to file
 data = (ctypes.c_ubyte * saveStm.GetSize())()
 saveStm.Read(0, data, len(data))
-f = open(outputPath + "/SaveToStream.pdf", "wb")
-f.write(data)
-f.close()
+with open(output_path.joinpath("SaveToStream.pdf"), "wb") as output_file:
+    output_file.write(bytearray(data))
 saveStm.Destroy()
 
 doc.Close()
 fileStm.Destroy()
+
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

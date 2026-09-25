@@ -1,33 +1,38 @@
+import importlib
 import os
 import sys
 import traceback
-import importlib
 
 # add src to path
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 
 modules = [
     "AddComment",
-    "AddTags",
     "AddTagAsArtifact",
+    "AddTags",
     "AddWatermark",
+    "ArtifactUntaggedContent",
     "ConvertToHtml",
     "ConvertToHtmlByPages",
+    "DeleteTags",
     "DocumentMetadata",
     "EditContent",
     "EditPageObjectMCID",
     "EditTagProperties",
     "EditTagReadingOrder",
     "ExtractImages",
+    "ExtractPages",
     "ExtractTables",
     "ExtractText",
     "MakeAccessible",
     "OpenDocFromStream",
-    "RenderPage",
     "PdfToJson",
+    "RemoveContentMarks",
+    "RenderPage",
     "SetFormFieldValue",
     "TagContentByBBox",
     "TagLink",
+    "UpdateMetadata",
 ]
 
 failed = []

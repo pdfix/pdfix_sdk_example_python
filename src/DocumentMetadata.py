@@ -1,35 +1,40 @@
 # DocumentMetadata.py
 # Copyright (c) 2018 PDFix. All Rights Reserved.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
-from pdfixsdk import *
-import ctypes  
+import ctypes
 
-pdfix  = GetPdfix()
+from pdfixsdk import GetPdfix, kPsTruncate
+
+from Utils import input_path, output_path
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 title = doc.GetInfo("Title")
 doc.SetInfo("Title", "My next presenttion")
 
 metaStm = doc.GetMetadata()
 if metaStm is None:
-    raise Exception('Unable to read document metadata: ' + pdfix.GetError()) 
+    raise RuntimeError(f"Unable to read document metadata: {pdfix.GetError()}")
 
 sz = metaStm.GetSize()
 data = bytearray(sz)
 rawData = (ctypes.c_ubyte * sz).from_buffer(data)
 metaStm.Read(0, rawData, len(rawData))
 
-stm = pdfix.CreateFileStream(outputPath + "/DocumentMetadata.xml", kPsTruncate)
+stm = pdfix.CreateFileStream(
+    output_path.joinpath("DocumentMetadata.xml").as_posix(), kPsTruncate
+)
 if stm is None:
-    raise Exception('Unable to open output file : ' + pdfix.GetError()) 
+    raise RuntimeError(f"Unable to open output file: {pdfix.GetError()}")
 stm.Write(0, rawData, len(rawData))
 stm.Destroy()
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

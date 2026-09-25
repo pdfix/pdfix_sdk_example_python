@@ -1,45 +1,66 @@
-# PDFix SDK example for python
+# PDFix SDK example for Python
+
 For more information please visit [https://pdfix.net](https://pdfix.net).
 
 ## Installation
-Initialize and activate python virtual environment
-```
+
+Initialize and activate a Python virtual environment:
+
+```bash
 python3 -m venv env
 ```
 
-Linux, macOS
-```
+Linux, macOS:
+
+```bash
 source env/bin/activate
 ```
-Windows
+
+Windows (PowerShell):
+
+```powershell
+.\env\Scripts\Activate.ps1
 ```
-env/Scripts/activate
+
+Windows (Command Prompt):
+
+```cmd
+env\Scripts\activate.bat
 ```
 
 ### Installation using requirements
-```
+
+```bash
 pip install -r requirements.txt
 ```
 
 ### Manual installation
-```
+
+```bash
 pip3 install pdfix-sdk
 ```
 
-## Code Example
-```
+## Code example
+
+```python
 from pdfixsdk import *
 
-pdfix  = GetPdfix()
-doc = pdfix.OpenDoc("test.pdf", "")
-print("Number of pages: " + str(doc.GetNumPages()))
-doc.close()
+pdfix = GetPdfix()
+if pdfix is None:
+    raise RuntimeError("Pdfix initialization failed")
 
+doc = pdfix.OpenDoc("test.pdf", "")
+if doc is None:
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
+
+print(f"Number of pages: {doc.GetNumPages()}")
+doc.Close()
 ```
 
-## Other Python real world projects with PDFix SDK
+## Other Python projects with PDFix SDK
+
 https://github.com/topics/pdfix-actions
 
-
 ## Have a question? Need help?
-Let us know and we’ll get back to you. Write us to support@pdfix.net or fill the [contact form](https://pdfix.net/support/).
+
+Let us know and we’ll get back to you. Write to support@pdfix.net or use the [contact form](https://pdfix.net/support/).

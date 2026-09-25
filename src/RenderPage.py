@@ -1,26 +1,34 @@
 # RenderPage.py
 # Copyright (c) 2018 PDFix. All Rights Reserved.
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfImageParams,
+    PdfPageRenderParams,
+    kImageDIBFormatArgb,
+    kImageFormatJpg,
+    kPsTruncate,
+    kRotate0,
+)
 
-pdfix  = GetPdfix()
+from Utils import input_path, output_path
+
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # prepare page for rendering
 page = doc.AcquirePage(0)
 if page is None:
-    raise Exception('Unable to acquire page : ' + pdfix.GetError()) 
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 pageView = page.AcquirePageView(1, kRotate0)
 if pageView is None:
-    raise Exception('Unable to acquire page view : ' + pdfix.GetError())  
+    raise RuntimeError(f"Unable to acquire page view: {pdfix.GetError()}")
 
 width = pageView.GetDeviceWidth()
 height = pageView.GetDeviceHeight()
@@ -28,25 +36,27 @@ height = pageView.GetDeviceHeight()
 # create an image
 image = pdfix.CreateImage(width, height, kImageDIBFormatArgb)
 if image is None:
-    raise Exception('Unable to create image : ' + pdfix.GetError())  
+    raise RuntimeError(f"Unable to create image: {pdfix.GetError()}")
 
 # render page
 renderParams = PdfPageRenderParams()
 renderParams.image = image
 renderParams.matrix = pageView.GetDeviceMatrix()
 if not page.DrawContent(renderParams):
-    raise Exception('Unable to draw content : ' + pdfix.GetError())  
+    raise RuntimeError(f"Unable to draw page content: {pdfix.GetError()}")
 
-# save image to file 
-stm = pdfix.CreateFileStream(outputPath + "/RenderPage.jpg", kPsTruncate)
+# save image to file
+stm = pdfix.CreateFileStream(
+    output_path.joinpath("RenderPage.jpg").as_posix(), kPsTruncate
+)
 if stm is None:
-    raise Exception('Unable to create file stream : ' + pdfix.GetError())  
+    raise RuntimeError(f"Unable to create file stream: {pdfix.GetError()}")
 
 imgParams = PdfImageParams()
 imgParams.format = kImageFormatJpg
 imgParams.quality = 75
 if not image.SaveToStream(stm, imgParams):
-    raise Exception('Unable to save image to stream : ' + pdfix.GetError())  
+    raise RuntimeError(f"Unable to save image to stream: {pdfix.GetError()}")
 
 # cleanup
 stm.Destroy()
@@ -54,3 +64,5 @@ image.Destroy()
 pageView.Release()
 page.Release()
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

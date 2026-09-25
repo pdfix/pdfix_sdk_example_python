@@ -1,7 +1,17 @@
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfMatrix,
+    PdfPage,
+    PdfPoint,
+    kFillRuleEvenOdd,
+    kFontAnsiCharset,
+    kFontDefANSICodepage,
+    kFontForceBold,
+    kSaveFull,
+)
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
+
 
 # add text to page
 def addText(page: PdfPage):
@@ -11,15 +21,22 @@ def addText(page: PdfPage):
     matrix.f = cropBox.bottom + 10
 
     sys_font = pdfix.FindSysFont("Arial", kFontForceBold, kFontDefANSICodepage)
+    if sys_font is None:
+        raise RuntimeError(pdfix.GetError())
+
     font = doc.CreateFont(sys_font, kFontAnsiCharset, 0)
+    if font is None:
+        raise RuntimeError(pdfix.GetError())
+
     sys_font.Destroy()
 
     content = page.GetContent()
     text_obj = content.AddNewText(-1, font, matrix)
     text_obj.SetText("Sample text")
 
+
 # add path to page
-def addPath(page: PdfPage): 
+def addPath(page: PdfPage):
     cropBox = page.GetCropBox()
     matrix = PdfMatrix()
     matrix.e = cropBox.left
@@ -43,20 +60,20 @@ def addPath(page: PdfPage):
 
     path_obj.SetStroke(True)
     path_obj.SetFillType(kFillRuleEvenOdd)
-    
 
-# content editing example 
-pdfix  = GetPdfix()
+
+# content editing example
+pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 page = doc.AcquirePage(0)
 if page is None:
-    raise Exception('Unable to acquire page : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 # add text to page
 addText(page)
@@ -64,8 +81,9 @@ addPath(page)
 
 page.Release()
 
-if not doc.Save(outputPath + "/EditContent.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+if not doc.Save(output_path.joinpath("EditContent.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
-
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

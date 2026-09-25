@@ -1,26 +1,32 @@
 # AddTags.py
 
-# import utils to load required shared libraries
-from Utils import inputPath, outputPath, stream_to_data
-from pdfixsdk import *
+from pdfixsdk import (
+    GetPdfix,
+    PdfTagsParams,
+    kDataFormatJson,
+    kPsReadOnly,
+    kSaveFull,
+)
+
+from Utils import input_path, output_path, stream_to_data
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(inputPath + "/test.pdf", "")
+doc = pdfix.OpenDoc(input_path.joinpath("test.pdf").as_posix(), "")
 if doc is None:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
 # load template configuration from JSON file
 tmpl = doc.GetTemplate()
 if not tmpl:
-    raise Exception('Unable to open pdf : ' + pdfix.GetError())
+    raise RuntimeError(f"Unable to get document template: {pdfix.GetError()}")
 
 preflight = True
 if preflight:
     # Auto-generate the template configuration using document Preflight
-    # Add reference pages into preflight processor. It's usefull to pick only certain 
+    # Add reference pages into preflight processor. It's usefull to pick only certain
     # pages from a large documents. If no pages are added, all proges are processed
     # in the Update method
     for i in range(doc.GetNumPages()):
@@ -29,21 +35,33 @@ if preflight:
 
     # to save generated template into a JSON
     memStm = pdfix.CreateMemStream()
+    if memStm is None:
+        raise RuntimeError(pdfix.GetError())
+
     tmpl.SaveToStream(memStm, kDataFormatJson, kSaveFull)
     templateBytes = bytearray(stream_to_data(memStm))
     memStm.Destroy()
 
 else:
     # load the template from a pre-created JSON
-    tmplStm = pdfix.CreateFileStream(inputPath + "/template.json", kPsReadOnly)
+    tmplStm = pdfix.CreateFileStream(
+        input_path.joinpath("template.json").as_posix(), kPsReadOnly
+    )
+    if tmplStm is None:
+        raise RuntimeError(pdfix.GetError())
+
     if not tmpl.LoadFromStream(tmplStm, kDataFormatJson):
-        raise Exception('Unable to open pdf : ' + pdfix.GetError())
+        raise RuntimeError(f"Unable to load template: {pdfix.GetError()}")
+
+    tmplStm.Destroy()
 
 tagsParams = PdfTagsParams()
 if not doc.AddTags(tagsParams):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
-if not doc.Save(outputPath + "/AddTags.pdf", kSaveFull):
-    raise Exception(pdfix.GetError())
+if not doc.Save(output_path.joinpath("AddTags.pdf").as_posix(), kSaveFull):
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).

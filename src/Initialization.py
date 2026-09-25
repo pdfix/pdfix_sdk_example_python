@@ -1,17 +1,18 @@
 # Initialization.py
 # Pdfix initialization example
 
-import Utils
-from pdfixsdk import *
+from pdfixsdk import GetPdfix
 
-pdfix  = GetPdfix()
+pdfix = GetPdfix()
 if pdfix is None:
-  raise Exception('Pdfix Initialization fail')
+    raise RuntimeError("Pdfix initialization failed")
 
 # check version
 major = pdfix.GetVersionMajor()
 minor = pdfix.GetVersionMinor()
 patch = pdfix.GetVersionPatch()
-print("PDFix SDK Version " + str(major) + "." + str(minor) + "." + str(patch))
+print(f"PDFix SDK Version {major}.{minor}.{patch}")
 
-
+# Destroy() releases the SDK (native library, license slots) while this process keeps
+# running. One-shot document examples omit Destroy() and exit after doc.Close().
+pdfix.Destroy()
