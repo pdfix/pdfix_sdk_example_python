@@ -7,10 +7,10 @@
 # Table and paragraph rects below come from that file's structure-element /BBox attributes.
 # PDF user space: origin is the bottom-left, so top is greater than bottom.
 
-from Utils import inputPath, outputPath
+from Utils import input_path, output_path
 from pdfixsdk import *
 
-INPUT_PDF = inputPath + "/tag_content_by_bbox.pdf"
+INPUT_PDF = input_path.joinpath("tag_content_by_bbox.pdf").as_posix()
 PAGE_NUM = 0
 
 # Objects outside the region are skipped by CreateElements.
@@ -51,8 +51,9 @@ def cell(row, col, left, bottom, right, top, header_scope=kCellScopeNone,
     row_span / col_span greater than 1 belong on the origin cell.
     A covered slot still needs its own record with span 1, so the list
     length stays rows * cols.
-    tag_id is the structure id of a header. headers lists those ids on a
-    data cell (AddAssociatedHeader).
+    tag_id is the structure id of a header cell.
+    headers lists those ids on a data cell. link_table_headers applies them
+    with AddAssociatedHeader after the table exists.
     """
     return {
         "row": row,
@@ -245,8 +246,47 @@ def build_table(page_map):
             pde_cell.SetHeaderScope(rec["header_scope"])
         if rec["tag_id"]:
             pde_cell.SetTagId(rec["tag_id"])
+
+
+def struct_kids(parent):
+    tree = parent.GetStructTree()
+    kids = []
+    for i in range(parent.GetNumChildren()):
+        if parent.GetChildType(i) != kPdsStructChildElement:
+            continue
+        kid = tree.GetStructElementFromObject(parent.GetChildObject(i))
+        if kid is not None:
+            kids.append(kid)
+    return kids
+
+
+def link_table_headers(table_elem):
+    """Attach the headers listed on each record in table["cells"].
+
+    Call this only after AddTags. TH and TD must already exist, and each
+    header cell must already have the id set in build_table. A data cell
+    with headers ["hc2", "hr3"] receives those two elements, in that order.
+    """
+    rows = [struct_kids(tr) for tr in struct_kids(table_elem) if tr.GetType(True) == "TR"]
+
+    by_id = {}
+    for cells in rows:
+        for cell_elem in cells:
+            tag_id = cell_elem.GetId()
+            if tag_id:
+                by_id[tag_id] = cell_elem
+
+    for rec in table["cells"]:
+        if not rec["headers"]:
+            continue
+        cell_elem = rows[rec["row"]][rec["col"]]
         for header_id in rec["headers"]:
-            pde_cell.AddAssociatedHeader(header_id)
+            header_elem = by_id.get(header_id)
+            if header_elem is None:
+                raise Exception("Header id not found: " + header_id)
+            # -1 appends the header id. False leaves the cell as TD.
+            if not cell_elem.AddAssociatedHeader(-1, header_elem, False):
+                raise Exception(pdfix.GetError())
 
 
 def document_element(struct_tree):
@@ -296,9 +336,15 @@ if dest is None:
 tag_region(page, dest, paragraph["bbox"], build_paragraph)
 tag_region(page, dest, table["bbox"], build_table)
 
+# The table is the last child of dest. Link headers only after its TH/TD exist.
+tagged = struct_kids(dest)
+if not tagged or tagged[-1].GetType(True) != "Table":
+    raise Exception("Tagged table was not created")
+link_table_headers(tagged[-1])
+
 page.Release()
 
-if not doc.Save(outputPath + "/TagContentByBBox.pdf", kSaveFull):
+if not doc.Save(output_path.joinpath("TagContentByBBox.pdf").as_posix(), kSaveFull):
     raise Exception(pdfix.GetError())
 
 doc.Close()
