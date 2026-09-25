@@ -26,6 +26,7 @@ modules = [
     "RenderPage",
     "PdfToJson",
     "SetFormFieldValue",
+    "TagContentByBBox",
     "TagLink",
 ]
 
