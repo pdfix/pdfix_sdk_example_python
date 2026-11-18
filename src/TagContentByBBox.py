@@ -1,23 +1,51 @@
 # TagContentByBBox.py
-# Tag one region of a page as a paragraph and another as a table.
+# Example how to tag one page region as a paragraph and another as a table.
 # The caller supplies bounding boxes only. Objects outside a box are
 # excluded for that pass so AddTags writes just that region.
 #
 # Input PDF (not resources/test.pdf): resources/tag_content_by_bbox.pdf
-# Table and paragraph rects below come from that file's structure-element /BBox attributes.
-# PDF user space: origin is the bottom-left, so top is greater than bottom.
+# Table and paragraph rects below come from that file's structure-element
+# /BBox attributes. PDF user space: origin is the bottom-left, so top is
+# greater than bottom.
+
+from pdfixsdk import (
+    GetPdfix,
+    PdeCell,
+    PdePageMap,
+    PdeTable,
+    PdeText,
+    PdfPage,
+    PdfRect,
+    PdfTagsParams,
+    PdsContent,
+    PdsForm,
+    PdsStructElement,
+    PdsStructTree,
+    kCellScopeCol,
+    kCellScopeNone,
+    kCellScopeRow,
+    kElemInitial,
+    kElemNoExpand,
+    kElemNoJoin,
+    kElemNoSplit,
+    kPdeCell,
+    kPdeTable,
+    kPdeText,
+    kPdsPageForm,
+    kPdsStructChildElement,
+    kSaveFull,
+    kStateDefault,
+    kStateExclude,
+    kStateNoRender,
+)
 
 from Utils import input_path, output_path
-from pdfixsdk import *
-
-INPUT_PDF = input_path.joinpath("tag_content_by_bbox.pdf").as_posix()
-PAGE_NUM = 0
 
 # Objects outside the region are skipped by CreateElements.
 EXCLUDE = kStateNoRender | kStateExclude
 
 
-def pdf_rect(left, bottom, right, top):
+def pdf_rect(left: float, bottom: float, right: float, top: float) -> PdfRect:
     rect = PdfRect()
     rect.left = left
     rect.bottom = bottom
@@ -26,35 +54,41 @@ def pdf_rect(left, bottom, right, top):
     return rect
 
 
-def rects_intersect(a, b):
-    return (a.left < b.right) and (b.left < a.right) and (a.bottom < b.top) and (b.bottom < a.top)
+def rects_intersect(a: PdfRect, b: PdfRect) -> bool:
+    return (
+        (a.left < b.right)
+        and (b.left < a.right)
+        and (a.bottom < b.top)
+        and (b.bottom < a.top)
+    )
 
 
-# Paragraph to tag. text_style 0 keeps a plain paragraph.
-# Set text_style to kTextH1 (or kTextH2..) to tag the same box as a heading.
-paragraph = {
-    "bbox": pdf_rect(50.72, 696.31, 400.04, 734.62),
-    "tag": "P",
-    "text_style": 0,
-}
-
-
-def cell(row, col, left, bottom, right, top, header_scope=kCellScopeNone,
-         row_span=1, col_span=1, tag_id="", headers=None):
-    """One table cell. Edit bbox, header_scope, and spans in the list below.
-
-    header_scope:
-      kCellScopeNone
-      kCellScopeCol                 column header
-      kCellScopeRow                 row header
-      kCellScopeRow | kCellScopeCol both (corner)
-    row_span / col_span greater than 1 belong on the origin cell.
-    A covered slot still needs its own record with span 1, so the list
-    length stays rows * cols.
-    tag_id is the structure id of a header cell.
-    headers lists those ids on a data cell. link_table_headers applies them
-    with AddAssociatedHeader after the table exists.
-    """
+def cell(
+    row: int,
+    col: int,
+    left: float,
+    bottom: float,
+    right: float,
+    top: float,
+    header_scope: int = kCellScopeNone,
+    row_span: int = 1,
+    col_span: int = 1,
+    tag_id: str = "",
+    headers: list[str] | None = None,
+):
+    # One table cell. Edit bbox, header_scope, and spans in the list below.
+    #
+    # header_scope:
+    #   kCellScopeNone
+    #   kCellScopeCol                 column header
+    #   kCellScopeRow                 row header
+    #   kCellScopeRow | kCellScopeCol both (corner)
+    # row_span / col_span greater than 1 belong on the origin cell.
+    # A covered slot still needs its own record with span 1, so the list
+    # length stays rows * cols.
+    # tag_id is the structure id of a header cell.
+    # headers lists those ids on a data cell. link_table_headers applies them
+    # with AddAssociatedHeader after the table exists.
     return {
         "row": row,
         "col": col,
@@ -66,6 +100,14 @@ def cell(row, col, left, bottom, right, top, header_scope=kCellScopeNone,
         "headers": list(headers or []),
     }
 
+
+# Paragraph to tag. text_style 0 keeps a plain paragraph.
+# Set text_style to kTextH1 (or kTextH2..) to tag the same box as a heading.
+paragraph = {
+    "bbox": pdf_rect(50.72, 696.31, 400.04, 734.62),
+    "tag": "P",
+    "text_style": 0,
+}
 
 # 6x5 price table from resources/tag_content_by_bbox.pdf.
 # Rects are the /BBox layout attributes on the Table, TH, and TD elements
@@ -111,13 +153,11 @@ table = {
 }
 
 
-def clip_content(content, bbox):
-    """Mark objects inside bbox as default and the rest as excluded.
-
-    A form stays included when any nested object hits the bbox, so the
-    engine still walks that form and honors the flags on its children.
-    Returns True when something in this content hits the bbox.
-    """
+def clip_content(content: PdsContent | None, bbox: PdfRect) -> bool:
+    # Mark objects inside bbox as default and the rest as excluded.
+    # A form stays included when any nested object hits the bbox, so the
+    # engine still walks that form and honors the flags on its children.
+    # Returns True when something in this content hits the bbox.
     if content is None:
         return False
     any_hit = False
@@ -135,7 +175,7 @@ def clip_content(content, bbox):
     return any_hit
 
 
-def reset_content(content):
+def reset_content(content: PdsContent | None) -> None:
     if content is None:
         return
     for i in range(content.GetNumObjects()):
@@ -147,7 +187,7 @@ def reset_content(content):
         obj.SetStateFlags(kStateDefault)
 
 
-def clip_annots(page, bbox):
+def clip_annots(page: PdfPage, bbox: PdfRect) -> None:
     for i in range(page.GetNumAnnots()):
         annot = page.GetAnnot(i)
         if annot is None:
@@ -156,21 +196,24 @@ def clip_annots(page, bbox):
         annot.SetStateFlags(kStateDefault if hit else EXCLUDE)
 
 
-def reset_annots(page):
+def reset_annots(page: PdfPage) -> None:
     for i in range(page.GetNumAnnots()):
         annot = page.GetAnnot(i)
         if annot is not None:
             annot.SetStateFlags(kStateDefault)
 
 
-def tag_region(page, parent, bbox, build_element):
-    """Exclude content outside bbox, build one predefined element, write tags.
-
-    parent is the structure element that receives the new tag as a child.
-    Pass any existing PdsStructElement here instead of the Div this example
-    creates, if the new tag should land somewhere else.
-    Flags are restored even when tagging fails.
-    """
+def tag_region(
+    page: PdfPage,
+    parent: PdsStructElement,
+    bbox: PdfRect,
+    build_element,
+) -> None:
+    # Exclude content outside bbox, build one predefined element, write tags.
+    # parent is the structure element that receives the new tag as a child.
+    # Pass any existing PdsStructElement here instead of the Div this example
+    # creates, if the new tag should land somewhere else.
+    # Flags are restored even when tagging fails.
     content = page.GetContent()
     clip_content(content, bbox)
     clip_annots(page, bbox)
@@ -178,14 +221,14 @@ def tag_region(page, parent, bbox, build_element):
     try:
         page_map = page.AcquirePageMap()
         if page_map is None:
-            raise Exception("Acquire PageMap fail: " + pdfix.GetError())
+            raise RuntimeError(f"Unable to acquire page map: {pdfix.GetError()}")
         if page_map.HasElements() and not page_map.RemoveElements():
-            raise Exception(pdfix.GetError())
+            raise RuntimeError(pdfix.GetError())
 
         build_element(page_map)
 
         if not page_map.CreateElements():
-            raise Exception(pdfix.GetError())
+            raise RuntimeError(pdfix.GetError())
 
         # standard_attrs writes the usual structure attributes.
         # headings 0 keeps the tag taken from the element, not from font size.
@@ -193,7 +236,7 @@ def tag_region(page, parent, bbox, build_element):
         params.standard_attrs = 1
         params.headings = 0
         if not page_map.AddTags(parent, False, params):
-            raise Exception(pdfix.GetError())
+            raise RuntimeError(pdfix.GetError())
     finally:
         if page_map is not None:
             page_map.Release()
@@ -201,10 +244,10 @@ def tag_region(page, parent, bbox, build_element):
         reset_annots(page)
 
 
-def build_paragraph(page_map):
+def build_paragraph(page_map: PdePageMap) -> None:
     element = page_map.CreateElement(kPdeText, None)
     if element is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     element.SetBBox(paragraph["bbox"])
     # Keep this block as one paragraph: do not join, split, or grow it.
     element.SetFlags(kElemNoJoin | kElemNoSplit | kElemNoExpand)
@@ -213,16 +256,16 @@ def build_paragraph(page_map):
         PdeText(element.obj).SetTextStyle(paragraph["text_style"])
 
 
-def build_table(page_map):
+def build_table(page_map: PdePageMap) -> None:
     rows = table["rows"]
     cols = table["cols"]
     cells = table["cells"]
     if len(cells) != rows * cols:
-        raise Exception("Table needs one cell record per grid slot (rows * cols)")
+        raise RuntimeError("Table needs one cell record per grid slot (rows * cols)")
 
     element = page_map.CreateElement(kPdeTable, None)
     if element is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     pde_table = PdeTable(element.obj)
     pde_table.SetBBox(table["bbox"])
     pde_table.SetNumRows(rows)
@@ -234,7 +277,7 @@ def build_table(page_map):
     for rec in cells:
         cell_elem = page_map.CreateElement(kPdeCell, pde_table)
         if cell_elem is None:
-            raise Exception(pdfix.GetError())
+            raise RuntimeError(pdfix.GetError())
         pde_cell = PdeCell(cell_elem.obj)
         pde_cell.SetRowNum(rec["row"])
         pde_cell.SetColNum(rec["col"])
@@ -248,26 +291,31 @@ def build_table(page_map):
             pde_cell.SetTagId(rec["tag_id"])
 
 
-def struct_kids(parent):
+def struct_kids(parent: PdsStructElement) -> list[PdsStructElement]:
     tree = parent.GetStructTree()
+    if tree is None:
+        raise RuntimeError(pdfix.GetError())
     kids = []
     for i in range(parent.GetNumChildren()):
         if parent.GetChildType(i) != kPdsStructChildElement:
             continue
-        kid = tree.GetStructElementFromObject(parent.GetChildObject(i))
+        obj = parent.GetChildObject(i)
+        if obj is None:
+            continue
+        kid = tree.GetStructElementFromObject(obj)
         if kid is not None:
             kids.append(kid)
     return kids
 
 
-def link_table_headers(table_elem):
-    """Attach the headers listed on each record in table["cells"].
-
-    Call this only after AddTags. TH and TD must already exist, and each
-    header cell must already have the id set in build_table. A data cell
-    with headers ["hc2", "hr3"] receives those two elements, in that order.
-    """
-    rows = [struct_kids(tr) for tr in struct_kids(table_elem) if tr.GetType(True) == "TR"]
+def link_table_headers(table_elem: PdsStructElement) -> None:
+    # Attach the headers listed on each record in table["cells"].
+    # Call this only after AddTags. TH and TD must already exist, and each
+    # header cell must already have the id set in build_table. A data cell
+    # with headers ["hc2", "hr3"] receives those two elements, in that order.
+    rows = [
+        struct_kids(tr) for tr in struct_kids(table_elem) if tr.GetType(True) == "TR"
+    ]
 
     by_id = {}
     for cells in rows:
@@ -283,17 +331,15 @@ def link_table_headers(table_elem):
         for header_id in rec["headers"]:
             header_elem = by_id.get(header_id)
             if header_elem is None:
-                raise Exception("Header id not found: " + header_id)
+                raise RuntimeError(f"Header id not found: {header_id}")
             # -1 appends the header id. False leaves the cell as TD.
             if not cell_elem.AddAssociatedHeader(-1, header_elem, False):
-                raise Exception(pdfix.GetError())
+                raise RuntimeError(pdfix.GetError())
 
 
-def document_element(struct_tree):
-    """The single Document tag under the structure-tree root.
-
-    Reuse one if it is already there. Otherwise create it at index 0.
-    """
+def document_element(struct_tree: PdsStructTree) -> PdsStructElement:
+    # The single Document tag under the structure-tree root.
+    # Reuse one if it is already there. Otherwise create it at index 0.
     for i in range(struct_tree.GetNumChildren()):
         obj = struct_tree.GetChildObject(i)
         if obj is None:
@@ -303,35 +349,35 @@ def document_element(struct_tree):
             return elem
     created = struct_tree.AddNewChild("Document", 0)
     if created is None:
-        raise Exception(pdfix.GetError())
+        raise RuntimeError(pdfix.GetError())
     return created
 
 
 pdfix = GetPdfix()
 if pdfix is None:
-    raise Exception("Pdfix Initialization fail")
+    raise RuntimeError("Pdfix initialization failed")
 
-doc = pdfix.OpenDoc(INPUT_PDF, "")
+doc = pdfix.OpenDoc(input_path.joinpath("tag_content_by_bbox.pdf").as_posix(), "")
 if doc is None:
-    raise Exception("Unable to open pdf: " + pdfix.GetError())
+    raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-page = doc.AcquirePage(PAGE_NUM)
+page = doc.AcquirePage(0)
 if page is None:
-    raise Exception("Unable to acquire page: " + pdfix.GetError())
+    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
 # Leave the existing structure tree in place.
 struct_tree = doc.GetStructTree()
 if struct_tree is None:
     struct_tree = doc.CreateStructTree()
 if struct_tree is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 document = document_element(struct_tree)
 # New tags are children of this Div, appended under Document.
 # To use another parent, pass that PdsStructElement to tag_region instead.
 dest = document.AddNewChild("Div", document.GetNumChildren())
 if dest is None:
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 tag_region(page, dest, paragraph["bbox"], build_paragraph)
 tag_region(page, dest, table["bbox"], build_table)
@@ -339,12 +385,14 @@ tag_region(page, dest, table["bbox"], build_table)
 # The table is the last child of dest. Link headers only after its TH/TD exist.
 tagged = struct_kids(dest)
 if not tagged or tagged[-1].GetType(True) != "Table":
-    raise Exception("Tagged table was not created")
+    raise RuntimeError("Tagged table was not created")
 link_table_headers(tagged[-1])
 
 page.Release()
 
 if not doc.Save(output_path.joinpath("TagContentByBBox.pdf").as_posix(), kSaveFull):
-    raise Exception(pdfix.GetError())
+    raise RuntimeError(pdfix.GetError())
 
 doc.Close()
+# pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
+# keeps running but must release PDFix (see Initialization.py, License.py).
