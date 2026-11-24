@@ -361,38 +361,43 @@ doc = pdfix.OpenDoc(input_path.joinpath("tag_content_by_bbox.pdf").as_posix(), "
 if doc is None:
     raise RuntimeError(f"Unable to open PDF: {pdfix.GetError()}")
 
-page = doc.AcquirePage(0)
-if page is None:
-    raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
+try:
+    page = doc.AcquirePage(0)
+    if page is None:
+        raise RuntimeError(f"Unable to acquire page: {pdfix.GetError()}")
 
-# Leave the existing structure tree in place.
-struct_tree = doc.GetStructTree()
-if struct_tree is None:
-    struct_tree = doc.CreateStructTree()
-if struct_tree is None:
-    raise RuntimeError(pdfix.GetError())
+    try:
+        # Leave the existing structure tree in place.
+        struct_tree = doc.GetStructTree()
+        if struct_tree is None:
+            struct_tree = doc.CreateStructTree()
+        if struct_tree is None:
+            raise RuntimeError(pdfix.GetError())
 
-document = document_element(struct_tree)
-# New tags are children of this Div, appended under Document.
-# To use another parent, pass that PdsStructElement to tag_region instead.
-dest = document.AddNewChild("Div", document.GetNumChildren())
-if dest is None:
-    raise RuntimeError(pdfix.GetError())
+        document = document_element(struct_tree)
+        # New tags are children of this Div, appended under Document.
+        # To use another parent, pass that PdsStructElement to tag_region instead.
+        dest = document.AddNewChild("Div", document.GetNumChildren())
+        if dest is None:
+            raise RuntimeError(pdfix.GetError())
 
-tag_region(page, dest, paragraph["bbox"], build_paragraph)
-tag_region(page, dest, table["bbox"], build_table)
+        tag_region(page, dest, paragraph["bbox"], build_paragraph)
+        tag_region(page, dest, table["bbox"], build_table)
 
-# The table is the last child of dest. Link headers only after its TH/TD exist.
-tagged = struct_kids(dest)
-if not tagged or tagged[-1].GetType(True) != "Table":
-    raise RuntimeError("Tagged table was not created")
-link_table_headers(tagged[-1])
+        # AddTags must put both tags into dest: P first, then the table.
+        # Link headers only after its TH/TD exist.
+        tagged = [kid.GetType(True) for kid in struct_kids(dest)]
+        if tagged != ["P", "Table"]:
+            raise RuntimeError(f"Expected [P, Table] in the Div, got {tagged}")
+        link_table_headers(struct_kids(dest)[-1])
+    finally:
+        # Release the page even when tagging fails; an acquired page left open
+        # at process exit can crash the SDK teardown.
+        page.Release()
 
-page.Release()
-
-if not doc.Save(output_path.joinpath("TagContentByBBox.pdf").as_posix(), kSaveFull):
-    raise RuntimeError(pdfix.GetError())
-
-doc.Close()
+    if not doc.Save(output_path.joinpath("TagContentByBBox.pdf").as_posix(), kSaveFull):
+        raise RuntimeError(pdfix.GetError())
+finally:
+    doc.Close()
 # pdfix.Destroy() not used: script exits when done. Call Destroy() only if the process
 # keeps running but must release PDFix (see Initialization.py, License.py).
